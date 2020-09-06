@@ -1,8 +1,9 @@
 import { RestfulApi } from "./base/api.base";
 import { NamspaceApi, Namespace } from "./namespace.api";
 import { NacosConfigApi, NacosConfig, NacosConfigQueryOptions } from "./config.api";
+import { AuthApi, SignInRepose } from "./auth.api";
 
-class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi {
+class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthApi {
 
     constructor(private options: NacosOptions) {
         super();
@@ -13,6 +14,9 @@ class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi {
         this.initHttp();
     }
     
+    /** auth api */
+    signIn!: (options: AuthOptions) => Promise<SignInRepose>;
+
     /** Namespace api */
     getAllNamespace!: () => Promise<Array<Namespace>>;
 
@@ -22,7 +26,7 @@ class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi {
     saveConfig!: (options: NacosConfigQueryOptions) => Promise<boolean>;
 }
 
-applyMixins(NacosApi, [NamspaceApi, NacosConfigApi]);
+applyMixins(NacosApi, [NamspaceApi, NacosConfigApi, AuthApi]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
     baseCtors.forEach(baseCtor => {
@@ -33,12 +37,12 @@ function applyMixins(derivedCtor: any, baseCtors: any[]) {
 }
 
 
-interface TokenOptions {
+export interface TokenOptions {
     url: string;
     accessToken: string;
 }
 
-interface AuthOptions {
+export interface AuthOptions {
     url: string;
     username: string;
     password: string;
