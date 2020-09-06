@@ -18,7 +18,29 @@ const yamlIcon = path.join(__filename, '..', '..', '..', 'media', 'yaml.svg');
 const htmlIcon = path.join(__filename, '..', '..', '..', 'media', 'html.svg');
 const propertiesIcon = path.join(__filename, '..', '..', '..', 'media', 'properties.svg');
 
-export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
+export class NacosConfigProvider implements TreeDataProvider<NacosItem>, vscode.TextDocumentContentProvider {
+
+    onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
+    onDidChange = this.onDidChangeEmitter.event;
+
+    async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken) {
+        const paths = uri.path.split('/');
+        let tenant: string = "", group: string, dataId: string;
+        if (paths.length === 3) {
+            tenant = paths[0];
+            group = paths[1];
+            dataId = paths[2];
+        } else {
+            group = paths[0];
+            dataId = paths[1];
+        }
+        const config = await api.getConfigContent({
+            tenant,
+            group,
+            dataId
+        });
+        return config.content;
+    }
 
     onDidChangeTreeData?: vscode.Event<void | NacosItem | null | undefined> | undefined;
 
@@ -40,6 +62,13 @@ export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
         }
     }
 
+    constructor() {
+        vscode.commands.registerCommand('nacos-configurer.openConfig', resource => this.openResource(resource));
+    }
+
+    private openResource(resourceUri: vscode.Uri): void {
+		vscode.window.showTextDocument(resourceUri);
+	}
 }
 
 class NacosItem extends TreeItem {
@@ -78,6 +107,12 @@ function getIconWithType(type: NacosConfigType) {
 class NacosConfigItem extends NacosItem {
     constructor(public nacosConfig: NacosConfig) {
         super(`${nacosConfig.dataId}(${nacosConfig.type})`, nacosConfig.group, getIconWithType(nacosConfig.type), TreeItemCollapsibleState.None);
+        this.resourceUri = vscode.Uri.parse(`nacos-configurer:${nacosConfig.tenant}/${nacosConfig.group}/${nacosConfig.dataId}`);
+        this.command = {
+            command: "nacos-configurer.openConfig",
+            arguments: [this.resourceUri],
+            title: "Open nacos config file"
+        };
     }
 }
 

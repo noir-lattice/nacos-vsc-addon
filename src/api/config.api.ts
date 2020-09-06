@@ -11,6 +11,7 @@ export enum NacosConfigType {
 }
 
 export interface NacosConfig {
+    content: string;
     appName: string;
     dataId: string;
     group: string;
@@ -44,4 +45,13 @@ export class NacosConfigApi extends RestfulApi {
         return res.data.pageItems;
     }
 
+    async getConfigContent(options: NacosConfigQueryOptions): Promise<NacosConfig> {
+        const res = await this.http.get<NacosConfig>(namespaceUrl, {
+            params: {
+                ...options,
+                show: "all"
+            }
+        });
+        return res.data;
+    }
 }

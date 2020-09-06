@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
 import { NacosConfigProvider } from './view/nacos.config.provider';
 
+const nacosConfigurer = new NacosConfigProvider();
+
+
 export function activate(context: vscode.ExtensionContext) {
-	vscode.window.registerTreeDataProvider(
-		'nacos-configurer',
-		new NacosConfigProvider()
-	);
+	vscode.workspace.registerTextDocumentContentProvider("nacos-configurer", nacosConfigurer);
+	vscode.window.registerTreeDataProvider('nacos-configurer', nacosConfigurer);
 }
 
 // this method is called when your extension is deactivated
