@@ -7,6 +7,8 @@ export class RestfulApi {
 
     accessToken!: string | undefined;
 
+    errCallback: Array<(res: any) => void | Promise<void>> = [];
+
     public initHttp() {
         this.http = axios;
         axios.interceptors.request.use(config => {
@@ -16,6 +18,17 @@ export class RestfulApi {
                 config.params.accessToken = this.accessToken;
             }
             return config;
+        });
+
+        axios.interceptors.response.use(async response => {
+            const status = response.status;
+            if (status !== 200) { 
+                for (const cb of this.errCallback) {
+                    await cb(response);
+                }
+                return Promise.reject(response)
+            }
+            return Promise.resolve(response)
         });
     }
 }

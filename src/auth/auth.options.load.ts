@@ -61,22 +61,40 @@ export async function createApiHandleWithNacosConfig(): Promise<NacosApi> {
     }
 
     const api = new NacosApi(options);
-    if ((options as TokenOptions).accessToken) {
-        return api;
-    } else {
-        let signInRes;
+    if (!(options as TokenOptions).accessToken) {
         try {
-            signInRes = await api.signIn(options as AuthOptions);
-        } catch  {
-            // pass
-        }
-        if (!signInRes || !signInRes.accessToken) {
-            vscode.window.showErrorMessage("The Nacos addon support cannot be obtained without basic authentication information!");
-            options = undefined;
+            await signInAndSaveOptions(api);
+        } catch {
             return createApiHandleWithNacosConfig();
         }
-        (options as TokenOptions).accessToken = signInRes.accessToken;
-        saveOptions();
-        return api;
     }
+
+    // token expire
+    api.errCallback.push(async res => {
+        if (res.status === 403) {
+            try {
+                await signInAndSaveOptions(api);
+            } catch {
+                createApiHandleWithNacosConfig();
+            }
+        }
+    });
+    
+    return api;
+}
+
+async function signInAndSaveOptions(api: NacosApi) {
+    let signInRes;
+    try {
+        signInRes = await api.signIn(options as AuthOptions);
+    } catch  {
+        // pass
+    }
+    if (!signInRes || !signInRes.accessToken) {
+        vscode.window.showErrorMessage("The Nacos addon support cannot be obtained without basic authentication information!");
+        options = undefined;
+        throw new Error("Can't sign in.");
+    }
+    (options as TokenOptions).accessToken = signInRes.accessToken;
+    saveOptions();
 }
