@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import * as path from 'path';
 import NacosApi from "../api/api.facade";
 import { Namespace } from "../api/namespace.api";
-import { NacosConfig } from "../api/config.api";
+import { NacosConfig, NacosConfigType } from "../api/config.api";
 
 const api = new NacosApi({
     url: "http://192.168.3.50:8848/nacos",
@@ -11,6 +11,12 @@ const api = new NacosApi({
 });
 
 const namespaceIcon = path.join(__filename, '..', '..', '..', 'media', 'namespace.svg');
+const textIcon = path.join(__filename, '..', '..', '..', 'media', 'text.svg');
+const jsonIcon = path.join(__filename, '..', '..', '..', 'media', 'json.svg');
+const xmlIcon = path.join(__filename, '..', '..', '..', 'media', 'xml.svg');
+const yamlIcon = path.join(__filename, '..', '..', '..', 'media', 'yaml.svg');
+const htmlIcon = path.join(__filename, '..', '..', '..', 'media', 'html.svg');
+const propertiesIcon = path.join(__filename, '..', '..', '..', 'media', 'properties.svg');
 
 export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
 
@@ -33,6 +39,7 @@ export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
             return configs.map(config => new NacosConfigItem(config));
         }
     }
+
 }
 
 class NacosItem extends TreeItem {
@@ -49,9 +56,28 @@ class NacosItem extends TreeItem {
     }
 }
 
+function getIconWithType(type: NacosConfigType) {
+    switch (type) {
+        case NacosConfigType.TEXT:
+            return textIcon;
+        case NacosConfigType.JSON:
+            return jsonIcon;
+        case NacosConfigType.XML:
+            return xmlIcon;
+        case NacosConfigType.YAML:
+            return yamlIcon;
+        case NacosConfigType.HTML:
+            return htmlIcon;
+        case NacosConfigType.PROPERTIES:
+            return propertiesIcon;
+        default:
+            return textIcon;
+    }
+}
+
 class NacosConfigItem extends NacosItem {
     constructor(public nacosConfig: NacosConfig) {
-        super(`${nacosConfig.dataId}(${nacosConfig.type})`, nacosConfig.group, "media/namespace.svg", TreeItemCollapsibleState.None);
+        super(`${nacosConfig.dataId}(${nacosConfig.type})`, nacosConfig.group, getIconWithType(nacosConfig.type), TreeItemCollapsibleState.None);
     }
 }
 
@@ -60,5 +86,3 @@ class NamespaceItem extends NacosItem {
         super(namespace.namespaceShowName, namespace.namespace, namespaceIcon, TreeItemCollapsibleState.Expanded);
     }
 }
-
-
