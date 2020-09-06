@@ -1,4 +1,4 @@
-import { TreeDataProvider, TreeItem, TreeItemCollapsibleState, ProviderResult } from "vscode";
+import { TreeDataProvider, TreeItem, TreeItemCollapsibleState } from "vscode";
 import * as vscode from "vscode";
 import * as path from 'path';
 import NacosApi from "../api/api.facade";
@@ -18,29 +18,7 @@ const yamlIcon = path.join(__filename, '..', '..', '..', 'media', 'yaml.svg');
 const htmlIcon = path.join(__filename, '..', '..', '..', 'media', 'html.svg');
 const propertiesIcon = path.join(__filename, '..', '..', '..', 'media', 'properties.svg');
 
-export class NacosConfigProvider implements TreeDataProvider<NacosItem>, vscode.TextDocumentContentProvider {
-
-    onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
-    onDidChange = this.onDidChangeEmitter.event;
-
-    async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken) {
-        const paths = uri.path.split('/');
-        let tenant: string = "", group: string, dataId: string;
-        if (paths.length === 3) {
-            tenant = paths[0];
-            group = paths[1];
-            dataId = paths[2];
-        } else {
-            group = paths[0];
-            dataId = paths[1];
-        }
-        const config = await api.getConfigContent({
-            tenant,
-            group,
-            dataId
-        });
-        return config.content;
-    }
+export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
 
     onDidChangeTreeData?: vscode.Event<void | NacosItem | null | undefined> | undefined;
 

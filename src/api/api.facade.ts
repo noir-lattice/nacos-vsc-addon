@@ -18,7 +18,8 @@ class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi {
 
     /** Nacos config api */
     getAllConfig!: (options: NacosConfigQueryOptions) => Promise<Array<NacosConfig>>;
-    getConfigContent!: (options: NacosConfigQueryOptions) => Promise<NacosConfig>;
+    getConfig!: (options: NacosConfigQueryOptions) => Promise<NacosConfig>;
+    saveConfig!: (options: NacosConfigQueryOptions) => Promise<boolean>;
 }
 
 applyMixins(NacosApi, [NamspaceApi, NacosConfigApi]);

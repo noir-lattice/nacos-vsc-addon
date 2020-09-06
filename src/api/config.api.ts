@@ -45,7 +45,7 @@ export class NacosConfigApi extends RestfulApi {
         return res.data.pageItems;
     }
 
-    async getConfigContent(options: NacosConfigQueryOptions): Promise<NacosConfig> {
+    async getConfig(options: NacosConfigQueryOptions): Promise<NacosConfig> {
         const res = await this.http.get<NacosConfig>(namespaceUrl, {
             params: {
                 ...options,
@@ -53,5 +53,12 @@ export class NacosConfigApi extends RestfulApi {
             }
         });
         return res.data;
+    }
+
+    async saveConfig(options: NacosConfigQueryOptions): Promise<boolean> {
+        const status = await this.http.post<boolean>(namespaceUrl, undefined, {
+            params: options
+        });
+        return status.data;
     }
 }

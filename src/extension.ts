@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
 import { NacosConfigProvider } from './view/nacos.config.provider';
+import { NacosConfigFileSystemProvider } from './view/nacos.config.fs.provider';
 
 const nacosConfigurer = new NacosConfigProvider();
-
+const nacosCOnfigurerFs = new NacosConfigFileSystemProvider();
 
 export function activate(context: vscode.ExtensionContext) {
-	vscode.workspace.registerTextDocumentContentProvider("nacos-configurer", nacosConfigurer);
+	vscode.workspace.registerFileSystemProvider("nacos-configurer", nacosCOnfigurerFs);
 	vscode.window.registerTreeDataProvider('nacos-configurer', nacosConfigurer);
 }
 
