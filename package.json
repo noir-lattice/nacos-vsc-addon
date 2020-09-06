@@ -2,7 +2,7 @@
   "name": "nacos",
   "displayName": "nacos-viewer",
   "description": "nacos vscode viewer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "noir",
   "engines": {
     "vscode": "^1.48.0"
