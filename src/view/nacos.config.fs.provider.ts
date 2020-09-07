@@ -61,16 +61,10 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
      */
     private extractNacosConfigOps(uri: Uri): Partial<NacosConfig> {
         const paths = uri.path.split('/');
-        let tenant: string = "", group: string, dataId: string;
-        if (paths.length === 3) {
-            tenant = paths[0];
-            group = paths[1];
-            dataId = paths[2];
-        }
-        else {
-            group = paths[0];
-            dataId = paths[1];
-        }
+        let tenant: string, group: string, dataId: string;
+        tenant = paths[1] == "default" ? "" : paths[1];
+        group = paths[2];
+        dataId = paths[3];
         return { tenant, group, dataId };
     }
 

@@ -80,7 +80,7 @@ function getIconWithType(type: NacosConfigType) {
 class NacosConfigItem extends NacosItem {
     constructor(public nacosConfig: NacosConfig) {
         super(nacosConfig.dataId, nacosConfig.group, getIconWithType(nacosConfig.type), TreeItemCollapsibleState.None);
-        this.resourceUri = vscode.Uri.parse(`nacos-configurer:${nacosConfig.tenant}/${nacosConfig.group}/${nacosConfig.dataId}`);
+        this.resourceUri = vscode.Uri.parse(`nacos-configurer:/${nacosConfig.tenant || "default"}/${nacosConfig.group}/${nacosConfig.dataId}`);
         this.command = {
             command: "nacos-configurer.openConfig",
             arguments: [this.resourceUri],
