@@ -14,8 +14,12 @@ const htmlIcon = path.join(__filename, '..', '..', '..', 'media', 'html.svg');
 const propertiesIcon = path.join(__filename, '..', '..', '..', 'media', 'properties.svg');
 
 export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
+    private _onDidChangeTreeData: vscode.EventEmitter<NacosItem | undefined> = new vscode.EventEmitter<NacosItem | undefined>();
+    onDidChangeTreeData?: vscode.Event<void | NacosItem | null | undefined> | undefined = this._onDidChangeTreeData.event;
 
-    onDidChangeTreeData?: vscode.Event<void | NacosItem | null | undefined> | undefined;
+    refresh() {
+        this._onDidChangeTreeData.fire(undefined);
+    }
 
     getTreeItem(element: NacosItem): TreeItem | Thenable<TreeItem> {
         return element;
