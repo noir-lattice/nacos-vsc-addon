@@ -16,6 +16,7 @@ export interface NacosConfig {
     dataId: string;
     group: string;
     id?: number;
+    lastModifiedTime?: string;
     tenant: string;
     type: NacosConfigType;
 }
@@ -86,7 +87,10 @@ export class NacosConfigApi extends RestfulApi {
 
     async getConfigHistory(options: NacosConfig): Promise<NacosConfig> {
         const res = await this.http.get<NacosConfig>(historyUrl, {
-            params: options
+            params: {
+                ...options,
+                nid: options.id
+            }
         });
         return res.data;
     }

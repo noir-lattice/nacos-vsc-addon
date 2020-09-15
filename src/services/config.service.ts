@@ -5,6 +5,7 @@ import { NacosConfigItem, NacosConfigProvider, NamespaceItem } from "../view/nac
 import { inputOptions } from "../utils/input.box";
 
 let currentFile: string | undefined;
+let currentDataId: string | undefined;
 
 export class ConfigService {
 
@@ -54,9 +55,14 @@ export class ConfigService {
     async diffConfig(configNode: NacosConfigItem) {
         if (!currentFile) {
             currentFile = `nacos-configurer-read:/${configNode.nacosConfig.tenant || 'default'}/${configNode.nacosConfig.group}/${configNode.nacosConfig.dataId}`
+            currentDataId = configNode.nacosConfig.dataId;
         } else {
-            vscode.commands.executeCommand("vscode.diff", vscode.Uri.parse(`nacos-configurer:/${configNode.nacosConfig.tenant || 'default'}/${configNode.nacosConfig.group}/${configNode.nacosConfig.dataId}`), vscode.Uri.parse(currentFile))
+            vscode.commands.executeCommand("vscode.diff",
+                vscode.Uri.parse(`nacos-configurer:/${configNode.nacosConfig.tenant || 'default'}/${configNode.nacosConfig.group}/${configNode.nacosConfig.dataId}`),
+                vscode.Uri.parse(currentFile),
+                `${configNode.nacosConfig.dataId} ⇋ ${currentDataId}`);
             currentFile = undefined;
+            currentDataId = undefined;
         }
     }
 }

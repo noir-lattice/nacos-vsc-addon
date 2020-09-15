@@ -6,6 +6,7 @@ import { Namespace } from "../api/namespace.api";
 import { NacosConfig, NacosConfigType } from "../api/config.api";
 import { NamespaceService } from "../services/namespace.service";
 import { ConfigService } from "../services/config.service";
+import { registerHistory } from "./nacos.config.history";
 
 const namespaceIcon = path.join(__filename, '..', '..', '..', 'media', 'namespace.svg');
 const textIcon = path.join(__filename, '..', '..', '..', 'media', 'text.svg');
@@ -43,9 +44,11 @@ export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
         }
     }
 
-    constructor(private api: NacosApi) {
+    constructor(private api: NacosApi, context: vscode.ExtensionContext) {
         this.namespaceService = new NamespaceService(this, api);
         this.configService = new ConfigService(this, api);
+        // register history
+        registerHistory(this.api, context);
         // register command
         vscode.commands.registerCommand('nacos-configurer.openConfig', resource => this.openResource(resource));
         vscode.commands.registerCommand('nacos-configurer.refreshEntry', () => this.refresh());

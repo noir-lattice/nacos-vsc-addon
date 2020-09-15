@@ -47,6 +47,10 @@
             {
                 "command": "nacos-configurer.diffConfig",
                 "title": "Diff config file"
+            },
+            {
+                "command": "nacos-configurer.historyConfig",
+                "title": "Show history"
             }
         ],
         "menus": {
@@ -75,6 +79,9 @@
                 "when": "view == nacos-configurer && viewItem == NacosConfigItem"
             }, {
                 "command": "nacos-configurer.diffConfig",
+                "when": "view == nacos-configurer && viewItem == NacosConfigItem"
+            }, {
+                "command": "nacos-configurer.historyConfig",
                 "when": "view == nacos-configurer && viewItem == NacosConfigItem"
             }]
         },
