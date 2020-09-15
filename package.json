@@ -2,7 +2,7 @@
     "name": "nacos",
     "displayName": "nacos-viewer",
     "description": "nacos vscode viewer",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "publisher": "noir",
     "engines": {
         "vscode": "^1.48.0"
@@ -15,9 +15,10 @@
         "onView:nacos-configurer"
     ],
     "main": "./out/extension.js",
-    "icon": "./resources/service-nacos.png",
+    "icon": "resources/service-nacos.png",
     "contributes": {
-        "commands": [{
+        "commands": [
+            {
                 "command": "nacos-configurer.refreshEntry",
                 "title": "Refresh",
                 "icon": {
@@ -55,7 +56,8 @@
             }
         ],
         "menus": {
-            "view/title": [{
+            "view/title": [
+                {
                     "command": "nacos-configurer.refreshEntry",
                     "when": "view == nacos-configurer",
                     "group": "navigation"
@@ -66,38 +68,49 @@
                     "group": "inline"
                 }
             ],
-            "view/item/context": [{
-                "command": "nacos-configurer.updateNamespace",
-                "when": "view == nacos-configurer && viewItem == NamespaceItem"
-            }, {
-                "command": "nacos-configurer.deleteNamespace",
-                "when": "view == nacos-configurer && viewItem == NamespaceItem"
-            }, {
-                "command": "nacos-configurer.createConfig",
-                "when": "view == nacos-configurer && viewItem == NamespaceItem"
-            }, {
-                "command": "nacos-configurer.deleteConfig",
-                "when": "view == nacos-configurer && viewItem == NacosConfigItem"
-            }, {
-                "command": "nacos-configurer.diffConfig",
-                "when": "view == nacos-configurer && viewItem == NacosConfigItem"
-            }, {
-                "command": "nacos-configurer.historyConfig",
-                "when": "view == nacos-configurer && viewItem == NacosConfigItem"
-            }]
+            "view/item/context": [
+                {
+                    "command": "nacos-configurer.updateNamespace",
+                    "when": "view == nacos-configurer && viewItem == NamespaceItem"
+                },
+                {
+                    "command": "nacos-configurer.deleteNamespace",
+                    "when": "view == nacos-configurer && viewItem == NamespaceItem"
+                },
+                {
+                    "command": "nacos-configurer.createConfig",
+                    "when": "view == nacos-configurer && viewItem == NamespaceItem"
+                },
+                {
+                    "command": "nacos-configurer.deleteConfig",
+                    "when": "view == nacos-configurer && viewItem == NacosConfigItem"
+                },
+                {
+                    "command": "nacos-configurer.diffConfig",
+                    "when": "view == nacos-configurer && viewItem == NacosConfigItem"
+                },
+                {
+                    "command": "nacos-configurer.historyConfig",
+                    "when": "view == nacos-configurer && viewItem == NacosConfigItem"
+                }
+            ]
         },
         "viewsContainers": {
-            "activitybar": [{
-                "id": "nacos-extends",
-                "title": "Nacos configurer",
-                "icon": "media/service-nacos.svg"
-            }]
+            "activitybar": [
+                {
+                    "id": "nacos-extends",
+                    "title": "Nacos configurer",
+                    "icon": "media/service-nacos.svg"
+                }
+            ]
         },
         "views": {
-            "nacos-extends": [{
-                "id": "nacos-configurer",
-                "name": "Nacos configurer"
-            }]
+            "nacos-extends": [
+                {
+                    "id": "nacos-configurer",
+                    "name": "Nacos configurer"
+                }
+            ]
         }
     },
     "scripts": {
