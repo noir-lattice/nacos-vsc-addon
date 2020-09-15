@@ -2,10 +2,15 @@ import { TreeDataProvider } from "vscode";
 import * as vscode from "vscode";
 import NacosApi from "../api/api.facade";
 import { NacosItem, NamespaceItem, NacosConfigItem } from "./item/node.item.provider";
+import { NamespaceService } from "../services/namespace.service";
+import { ConfigService } from "../services/config.service";
+import { registerHistory } from "./nacos.config.history";
 
 export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<NacosItem | undefined> = new vscode.EventEmitter<NacosItem | undefined>();
     onDidChangeTreeData?: vscode.Event<void | NacosItem | null | undefined> | undefined = this._onDidChangeTreeData.event;
+    namespaceService: NamespaceService;
+    configService: ConfigService;
 
     refresh() {
         this._onDidChangeTreeData.fire(undefined);
@@ -29,11 +34,17 @@ export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
         }
     }
 
-    constructor(private api: NacosApi) {
+    constructor(private api: NacosApi, context: vscode.ExtensionContext) {
+        this.namespaceService = new NamespaceService(this, api);
+        this.configService = new ConfigService(this, api);
+        // register history
+        registerHistory(this.api, context);
+        // register command
         vscode.commands.registerCommand('nacos-configurer.openConfig', resource => this.openResource(resource));
+        vscode.commands.registerCommand('nacos-configurer.refreshEntry', () => this.refresh());
     }
 
     private openResource(resourceUri: vscode.Uri): void {
-		vscode.window.showTextDocument(resourceUri);
-	}
+        vscode.window.showTextDocument(resourceUri);
+    }
 }

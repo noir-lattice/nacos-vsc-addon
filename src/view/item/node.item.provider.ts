@@ -6,13 +6,27 @@ import { NacosConfigType, NacosConfig } from "../../api/config.api";
 import { Namespace } from "../../api/namespace.api";
 
 
-const namespaceIcon = path.join(__filename, '..', '..', '..', 'media', 'namespace.svg');
-const textIcon = path.join(__filename, '..', '..', '..', 'media', 'text.svg');
-const jsonIcon = path.join(__filename, '..', '..', '..', 'media', 'json.svg');
-const xmlIcon = path.join(__filename, '..', '..', '..', 'media', 'xml.svg');
-const yamlIcon = path.join(__filename, '..', '..', '..', 'media', 'yaml.svg');
-const htmlIcon = path.join(__filename, '..', '..', '..', 'media', 'html.svg');
-const propertiesIcon = path.join(__filename, '..', '..', '..', 'media', 'properties.svg');
+const namespaceIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'namespace.svg');
+const textIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'text.svg');
+const jsonIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'json.svg');
+const xmlIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'xml.svg');
+const yamlIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'yaml.svg');
+const htmlIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'html.svg');
+const propertiesIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'properties.svg');
+
+export class NacosItem extends TreeItem {
+    constructor(
+        label: string,
+        desc: string,
+        iconPath: string,
+        collapsibleState: TreeItemCollapsibleState
+    ) {
+        super(label, collapsibleState);
+        this.tooltip = label;
+        this.description = desc;
+        this.iconPath = iconPath;
+    }
+}
 
 function getIconWithType(type: NacosConfigType) {
     switch (type) {
@@ -33,21 +47,9 @@ function getIconWithType(type: NacosConfigType) {
     }
 }
 
-export class NacosItem extends TreeItem {
-    constructor(
-        label: string,
-        desc: string,
-        iconPath: string,
-        collapsibleState: TreeItemCollapsibleState
-    ) {
-        super(label, collapsibleState);
-        this.tooltip = label;
-        this.description = desc;
-        this.iconPath = iconPath;
-    }
-}
-
 export class NacosConfigItem extends NacosItem {
+    contextValue = "NacosConfigItem";
+
     constructor(public nacosConfig: NacosConfig) {
         super(nacosConfig.dataId, nacosConfig.group, getIconWithType(nacosConfig.type), TreeItemCollapsibleState.None);
         this.resourceUri = vscode.Uri.parse(`nacos-configurer:/${nacosConfig.tenant || "default"}/${nacosConfig.group}/${nacosConfig.dataId}`);
@@ -60,7 +62,9 @@ export class NacosConfigItem extends NacosItem {
 }
 
 export class NamespaceItem extends NacosItem {
+    contextValue = "NamespaceItem";
+
     constructor(public namespace: Namespace) {
-        super(namespace.namespaceShowName, namespace.namespace, namespaceIcon, TreeItemCollapsibleState.Expanded);
+        super(namespace.namespaceShowName, namespace.namespace, namespaceIcon, TreeItemCollapsibleState.Collapsed);
     }
 }
