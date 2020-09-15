@@ -1,6 +1,6 @@
-import { RestfulApi } from "./base/api.base";
-import { NamspaceApi, Namespace } from "./namespace.api";
-import { NacosConfigApi, NacosConfig, NacosConfigQueryOptions } from "./config.api";
+import { PageResponse, RestfulApi } from "./base/api.base";
+import { NamspaceApi, Namespace, NamespaceCreteOptions } from "./namespace.api";
+import { NacosConfigApi, NacosConfig, NacosConfigQueryOptions, NacosConfigCreateOptions } from "./config.api";
 import { AuthApi, SignInRepose } from "./auth.api";
 
 class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthApi {
@@ -19,11 +19,17 @@ class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthAp
 
     /** Namespace api */
     getAllNamespace!: () => Promise<Array<Namespace>>;
+    createNamespace!: (options: NamespaceCreteOptions) => Promise<boolean>;
+    deleteNamespace!: (namespaceId: string) => Promise<boolean>;
 
     /** Nacos config api */
     getAllConfig!: (options: NacosConfigQueryOptions) => Promise<Array<NacosConfig>>;
     getConfig!: (options: NacosConfigQueryOptions) => Promise<NacosConfig>;
     saveConfig!: (options: NacosConfigQueryOptions) => Promise<boolean>;
+    createConfig!: (options: NacosConfigCreateOptions) => Promise<boolean>;
+    deleteConfig!: (options: NacosConfig) => Promise<boolean>;
+    getConfigHistoryPage!: (options: NacosConfigQueryOptions) => Promise<PageResponse<NacosConfig>>;
+    getConfigHistory!: (options: NacosConfig) => Promise<NacosConfig>;
 }
 
 applyMixins(NacosApi, [NamspaceApi, NacosConfigApi, AuthApi]);

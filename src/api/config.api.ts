@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { RestfulApi, CommonResponse, PageResponse } from './base/api.base';
+import { RestfulApi, PageResponse } from './base/api.base';
 
 export enum NacosConfigType {
     TEXT = "text",
@@ -15,9 +15,13 @@ export interface NacosConfig {
     appName: string;
     dataId: string;
     group: string;
-    id: number;
+    id?: number;
     tenant: string;
     type: NacosConfigType;
+}
+
+export interface NacosConfigCreateOptions extends NacosConfig {
+    namespaceId: string;
 }
 
 export class NacosConfigQueryOptions {
@@ -31,12 +35,13 @@ export class NacosConfigQueryOptions {
     search?: string = "accurate";
 }
 
-const namespaceUrl = "/v1/cs/configs";
+const configUrl = "/v1/cs/configs";
+const historyUrl = "/v1/cs/history";
 
 export class NacosConfigApi extends RestfulApi {
 
     async getAllConfig(options: NacosConfigQueryOptions): Promise<Array<NacosConfig>> {
-        const res = await this.http.get<PageResponse<NacosConfig>>(namespaceUrl, {
+        const res = await this.http.get<PageResponse<NacosConfig>>(configUrl, {
             params: {
                 ...new NacosConfigQueryOptions(),
                 ...options
@@ -46,7 +51,7 @@ export class NacosConfigApi extends RestfulApi {
     }
 
     async getConfig(options: NacosConfigQueryOptions): Promise<NacosConfig> {
-        const res = await this.http.get<NacosConfig>(namespaceUrl, {
+        const res = await this.http.get<NacosConfig>(configUrl, {
             params: {
                 ...options,
                 show: "all"
@@ -56,9 +61,40 @@ export class NacosConfigApi extends RestfulApi {
     }
 
     async saveConfig(options: NacosConfigQueryOptions): Promise<boolean> {
-        const status = await this.http.post<boolean>(namespaceUrl, undefined, {
+        const status = await this.http.post<boolean>(configUrl, undefined, {
             params: options
         });
         return status.data;
+    }
+
+    async createConfig(options: NacosConfigCreateOptions): Promise<boolean> { 
+        const status = await this.http.post<boolean>(configUrl, undefined, {
+            params: options
+        });
+        return status.data;
+    }
+
+    async deleteConfig(options: NacosConfig): Promise<boolean> {
+        const status = await this.http.delete<boolean>(configUrl, {
+            params: options
+        });
+        return status.data;
+    }
+
+    async getConfigHistoryPage(options: NacosConfigQueryOptions): Promise<PageResponse<NacosConfig>> {
+        const res = await this.http.get<PageResponse<NacosConfig>>(historyUrl, {
+            params: {
+                ...new NacosConfigQueryOptions(),
+                ...options
+            }
+        });
+        return res.data;
+    }
+
+    async getConfigHistory(options: NacosConfig): Promise<NacosConfig> {
+        const res = await this.http.get<NacosConfig>(historyUrl, {
+            params: options
+        });
+        return res.data;
     }
 }
