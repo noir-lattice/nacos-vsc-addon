@@ -47,10 +47,15 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
         let originConfig = await this.api.getConfig(nacosConfigOptions);
         originConfig = originConfig || nacosConfigOptions;
         originConfig.content = content.toString();
-        if (!await this.api.saveConfig(originConfig).catch(err => console.log(err.response))) {
-            throw new Error("Save nacos config file faild!");
+        const state = await vscode.window.showInformationMessage(`Confirm delete config "${originConfig.dataId}"?`, "Cancel", "Allow");
+        if (state === "Allow") {
+            if (!await this.api.saveConfig(originConfig).catch(err => console.log(err.response))) {
+                throw new Error("Save nacos config file faild");
+            } else {
+                this.nacosConfigProvider.refresh();
+            }
         } else {
-            this.nacosConfigProvider.refresh();
+            throw new Error("Cancel save nacos config file");
         }
     }
 
