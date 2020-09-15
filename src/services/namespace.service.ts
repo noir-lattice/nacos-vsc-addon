@@ -2,7 +2,8 @@ import * as vscode from "vscode";
 
 import NacosApi from "../api/api.facade";
 import { inputOptions } from "../utils/input.box";
-import { NacosConfigProvider, NamespaceItem } from "../view/nacos.config.provider";
+import { NamespaceItem } from "../view/item/node.item.provider";
+import { NacosConfigProvider } from "../view/nacos.config.provider";
 
 
 export class NamespaceService {

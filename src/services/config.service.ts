@@ -1,8 +1,9 @@
 import NacosApi from "../api/api.facade";
 import * as vscode from "vscode";
 
-import { NacosConfigItem, NacosConfigProvider, NamespaceItem } from "../view/nacos.config.provider";
+import { NacosConfigProvider } from "../view/nacos.config.provider";
 import { inputOptions } from "../utils/input.box";
+import { NamespaceItem, NacosConfigItem } from "../view/item/node.item.provider";
 
 let currentFile: string | undefined;
 let currentDataId: string | undefined;
