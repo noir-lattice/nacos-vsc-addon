@@ -12,6 +12,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.workspace.registerFileSystemProvider("nacos-configurer", nacosCOnfigurerFs);
 	// add viewer
 	vscode.window.registerTreeDataProvider('nacos-configurer', nacosConfigurer);
+
+	// vscode.commands.executeCommand("vscode.diff", vscode.Uri.parse(`nacos-configurer:/default/DEFAULT_GROUP/test.yaml`), vscode.Uri.parse(`nacos-configurer:/default/DEFAULT_GROUP/test1.yaml`), "test -> test1", { preview: true})
+
 }
 
 // this method is called when your extension is deactivated

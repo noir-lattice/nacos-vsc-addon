@@ -25,7 +25,7 @@ export class ConfigService {
             placeHolder: "Group"
         }], "Cancel create config");
         if (createConfigOpt) {
-            const fileUri = vscode.Uri.parse(`nacos-configurer:/${namespaceNode.namespace.namespace}/${createConfigOpt.group}/${createConfigOpt.dataId}`);
+            const fileUri = vscode.Uri.parse(`nacos-configurer:/${namespaceNode.namespace.namespace || 'default'}/${createConfigOpt.group}/${createConfigOpt.dataId}`);
             vscode.workspace.openTextDocument(fileUri).then(document => {
                 const edit = new vscode.WorkspaceEdit();
                 edit.insert(fileUri, new vscode.Position(0, 0), "You must be save something to create origin config file!");
