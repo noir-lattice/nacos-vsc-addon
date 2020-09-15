@@ -29,6 +29,10 @@
                 "title": "New namespace"
             },
             {
+                "command": "nacos-configurer.updateNamespace",
+                "title": "Update namespace"
+            },
+            {
                 "command": "nacos-configurer.deleteNamespace",
                 "title": "Remove namespace"
             }
@@ -46,6 +50,9 @@
                 }
             ],
             "view/item/context": [{
+                "command": "nacos-configurer.updateNamespace",
+                "when": "view == nacos-configurer && viewItem == NamespaceItem"
+            }, {
                 "command": "nacos-configurer.deleteNamespace",
                 "when": "view == nacos-configurer && viewItem == NamespaceItem"
             }]

@@ -52,6 +52,27 @@ export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
         }
     }
 
+    async updateNamespace(namespaceNode: NamespaceItem) {
+        const namespace = await this.api.getNamespace(namespaceNode.namespace.namespace);
+        const namespaceUpdateOpt = await inputOptions([{
+            placeHolder: "show name",
+            param: "namespaceShowName",
+            defaultVal: namespace.namespaceShowName
+        },
+        {
+            placeHolder: "describe",
+            param: "namespaceDesc",
+            defaultVal: namespace.namespaceDesc
+        }],
+            "Cancel update namespace");
+        if (namespaceUpdateOpt) {
+            namespaceUpdateOpt.namespace = namespace.namespace;
+            if (await this.api.updateNamespace(namespaceUpdateOpt)) {
+                this.refresh();
+            }
+        }
+    }
+
     getTreeItem(element: NacosItem): TreeItem | Thenable<TreeItem> {
         return element;
     }
@@ -76,6 +97,7 @@ export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
         vscode.commands.registerCommand('nacos-configurer.refreshEntry', () => this.refresh());
         vscode.commands.registerCommand('nacos-configurer.newNamespace', () => this.createNamespace());
         vscode.commands.registerCommand('nacos-configurer.deleteNamespace', (currentNamespaceNode: NamespaceItem) => this.removeNamespace(currentNamespaceNode));
+        vscode.commands.registerCommand('nacos-configurer.updateNamespace', (currentNamespaceNode: NamespaceItem) => this.updateNamespace(currentNamespaceNode));
     }
 
     private openResource(resourceUri: vscode.Uri): void {

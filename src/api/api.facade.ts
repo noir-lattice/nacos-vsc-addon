@@ -19,8 +19,10 @@ class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthAp
 
     /** Namespace api */
     getAllNamespace!: () => Promise<Array<Namespace>>;
+    getNamespace!: (namespaceId: string) => Promise<Namespace>;
     createNamespace!: (options: NamespaceCreteOptions) => Promise<boolean>;
     deleteNamespace!: (namespaceId: string) => Promise<boolean>;
+    updateNamespace!: (options: NamespaceCreteOptions) => Promise<boolean>;
 
     /** Nacos config api */
     getAllConfig!: (options: NacosConfigQueryOptions) => Promise<Array<NacosConfig>>;
