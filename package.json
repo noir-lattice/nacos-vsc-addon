@@ -15,6 +15,7 @@
         "onView:nacos-configurer"
     ],
     "main": "./out/extension.js",
+    "icon": "./resources/service-nacos.png",
     "contributes": {
         "commands": [{
                 "command": "nacos-configurer.refreshEntry",
