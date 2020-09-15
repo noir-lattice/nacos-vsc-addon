@@ -12,10 +12,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.workspace.registerFileSystemProvider("nacos-configurer", nacosCOnfigurerFs);
 	// add viewer
 	vscode.window.registerTreeDataProvider('nacos-configurer', nacosConfigurer);
-	// register command
-	vscode.commands.registerCommand('nacos-configurer.refreshEntry', () =>
-		nacosConfigurer.refresh()
-	);
 }
 
 // this method is called when your extension is deactivated
