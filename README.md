@@ -1,6 +1,5 @@
 # nacos extends
-
-这是一个nacos的可视化插件
+这是nacos的vscode编辑器插件，旨在拥有更好的编辑体验。
 
 ## Features
 * 配置文件列表展示
