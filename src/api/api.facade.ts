@@ -28,7 +28,6 @@ class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthAp
     getAllConfig!: (options: NacosConfigQueryOptions) => Promise<Array<NacosConfig>>;
     getConfig!: (options: NacosConfigQueryOptions) => Promise<NacosConfig>;
     saveConfig!: (options: NacosConfigQueryOptions) => Promise<boolean>;
-    createConfig!: (options: NacosConfigCreateOptions) => Promise<boolean>;
     deleteConfig!: (options: NacosConfig) => Promise<boolean>;
     getConfigHistoryPage!: (options: NacosConfigQueryOptions) => Promise<PageResponse<NacosConfig>>;
     getConfigHistory!: (options: NacosConfig) => Promise<NacosConfig>;

@@ -67,13 +67,6 @@ export class NacosConfigApi extends RestfulApi {
         return status.data;
     }
 
-    async createConfig(options: NacosConfigCreateOptions): Promise<boolean> { 
-        const status = await this.http.post<boolean>(configUrl, undefined, {
-            params: options
-        });
-        return status.data;
-    }
-
     async deleteConfig(options: NacosConfig): Promise<boolean> {
         const status = await this.http.delete<boolean>(configUrl, {
             params: options

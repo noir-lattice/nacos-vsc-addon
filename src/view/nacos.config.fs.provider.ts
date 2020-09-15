@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import NacosApi from "../api/api.facade";
 import { TextEncoder } from "util";
 import { NacosConfig } from "../api/config.api";
+import { NacosConfigProvider } from "./nacos.config.provider";
 
 /**
  * Nacos config file system support provider
@@ -11,7 +12,10 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
     onDidChangeEmitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
     onDidChangeFile: Event<vscode.FileChangeEvent[]> = this.onDidChangeEmitter.event;
 
-    constructor(private api: NacosApi) {}
+    constructor(
+        private api: NacosApi,
+        private nacosConfigProvider: NacosConfigProvider,
+    ) { }
 
     watch(uri: Uri, options: { recursive: boolean; excludes: string[]; }): Disposable {
         return new Disposable(() => {
@@ -21,7 +25,7 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
     }
 
     stat(uri: Uri): vscode.FileStat {
-       return { type: vscode.FileType.File } as any;
+        return { type: vscode.FileType.File } as any;
     }
 
     readDirectory(uri: Uri): [string, vscode.FileType][] | Thenable<[string, vscode.FileType][]> {
@@ -38,19 +42,22 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
         return new TextEncoder().encode(config.content);
     }
 
-    async writeFile(uri: Uri, content: Uint8Array, options: { create: boolean; overwrite: boolean; }) {
+    async writeFile(uri: Uri, content: Uint8Array) {
         let nacosConfigOptions = this.extractNacosConfigOps(uri);
-        const originConfig = await this.api.getConfig(nacosConfigOptions);
+        let originConfig = await this.api.getConfig(nacosConfigOptions);
+        originConfig = originConfig || nacosConfigOptions;
         originConfig.content = content.toString();
         if (!await this.api.saveConfig(originConfig).catch(err => console.log(err.response))) {
             throw new Error("Save nacos config file faild!");
+        } else {
+            this.nacosConfigProvider.refresh();
         }
     }
 
     delete(uri: Uri, options: { recursive: boolean; }): void | Thenable<void> {
         throw new Error("Method(delete) not implemented.");
     }
-    
+
     rename(oldUri: Uri, newUri: Uri, options: { overwrite: boolean; }): void | Thenable<void> {
         throw new Error("Method(rename) not implemented.");
     }

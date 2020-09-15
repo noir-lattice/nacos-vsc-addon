@@ -35,6 +35,14 @@
             {
                 "command": "nacos-configurer.deleteNamespace",
                 "title": "Remove namespace"
+            },
+            {
+                "command": "nacos-configurer.createConfig",
+                "title": "Create config file"
+            },
+            {
+                "command": "nacos-configurer.deleteConfig",
+                "title": "Remove config file"
             }
         ],
         "menus": {
@@ -55,6 +63,12 @@
             }, {
                 "command": "nacos-configurer.deleteNamespace",
                 "when": "view == nacos-configurer && viewItem == NamespaceItem"
+            }, {
+                "command": "nacos-configurer.createConfig",
+                "when": "view == nacos-configurer && viewItem == NamespaceItem"
+            }, {
+                "command": "nacos-configurer.deleteConfig",
+                "when": "view == nacos-configurer && viewItem == NacosConfigItem"
             }]
         },
         "viewsContainers": {

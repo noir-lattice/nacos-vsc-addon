@@ -7,7 +7,7 @@ import { createApiHandleWithNacosConfig } from './auth/auth.options.load';
 export async function activate(context: vscode.ExtensionContext) {
 	const api = await createApiHandleWithNacosConfig();
 	const nacosConfigurer = new NacosConfigProvider(api);
-	const nacosCOnfigurerFs = new NacosConfigFileSystemProvider(api);
+	const nacosCOnfigurerFs = new NacosConfigFileSystemProvider(api, nacosConfigurer);
 	// add nacos fils system support
 	vscode.workspace.registerFileSystemProvider("nacos-configurer", nacosCOnfigurerFs);
 	// add viewer

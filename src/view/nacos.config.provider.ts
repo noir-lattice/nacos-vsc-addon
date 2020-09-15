@@ -4,7 +4,8 @@ import * as path from 'path';
 import NacosApi from "../api/api.facade";
 import { Namespace } from "../api/namespace.api";
 import { NacosConfig, NacosConfigType } from "../api/config.api";
-import { inputOptions } from "../utils/input.box";
+import { NamespaceService } from "../services/namespace.service";
+import { ConfigService } from "../services/config.service";
 
 const namespaceIcon = path.join(__filename, '..', '..', '..', 'media', 'namespace.svg');
 const textIcon = path.join(__filename, '..', '..', '..', 'media', 'text.svg');
@@ -17,60 +18,11 @@ const propertiesIcon = path.join(__filename, '..', '..', '..', 'media', 'propert
 export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<NacosItem | undefined> = new vscode.EventEmitter<NacosItem | undefined>();
     onDidChangeTreeData?: vscode.Event<void | NacosItem | null | undefined> | undefined = this._onDidChangeTreeData.event;
+    namespaceService: NamespaceService;
+    configService: ConfigService;
 
     refresh() {
         this._onDidChangeTreeData.fire(undefined);
-    }
-
-    async createNamespace() {
-        const namespaceCreateOpt = await inputOptions([
-            {
-                placeHolder: "namespace",
-                param: "namespaceName",
-                defaultVal: ""
-            }, {
-                placeHolder: "describe",
-                param: "namespaceDesc",
-                defaultVal: ""
-            }, {
-                placeHolder: "namespace id",
-                param: "customNamespaceId",
-                defaultVal: guid()
-            }
-        ], "Cancel create namespace");
-        if (namespaceCreateOpt
-            && await this.api.createNamespace(namespaceCreateOpt)) {
-            this.refresh();
-        }
-    }
-
-    async removeNamespace(namespaceNode: NamespaceItem) {
-        const stat = await vscode.window.showInformationMessage(`Confirm delete namespace "${namespaceNode.contextValue}"?`, "Cancel", "Allow");
-        if (stat === "Allow"
-            && await this.api.deleteNamespace(namespaceNode.namespace.namespace)) {
-            this.refresh();
-        }
-    }
-
-    async updateNamespace(namespaceNode: NamespaceItem) {
-        const namespace = await this.api.getNamespace(namespaceNode.namespace.namespace);
-        const namespaceUpdateOpt = await inputOptions([{
-            placeHolder: "show name",
-            param: "namespaceShowName",
-            defaultVal: namespace.namespaceShowName
-        },
-        {
-            placeHolder: "describe",
-            param: "namespaceDesc",
-            defaultVal: namespace.namespaceDesc
-        }],
-            "Cancel update namespace");
-        if (namespaceUpdateOpt) {
-            namespaceUpdateOpt.namespace = namespace.namespace;
-            if (await this.api.updateNamespace(namespaceUpdateOpt)) {
-                this.refresh();
-            }
-        }
     }
 
     getTreeItem(element: NacosItem): TreeItem | Thenable<TreeItem> {
@@ -92,12 +44,11 @@ export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
     }
 
     constructor(private api: NacosApi) {
+        this.namespaceService = new NamespaceService(this, api);
+        this.configService = new ConfigService(this, api);
         // register command
         vscode.commands.registerCommand('nacos-configurer.openConfig', resource => this.openResource(resource));
         vscode.commands.registerCommand('nacos-configurer.refreshEntry', () => this.refresh());
-        vscode.commands.registerCommand('nacos-configurer.newNamespace', () => this.createNamespace());
-        vscode.commands.registerCommand('nacos-configurer.deleteNamespace', (currentNamespaceNode: NamespaceItem) => this.removeNamespace(currentNamespaceNode));
-        vscode.commands.registerCommand('nacos-configurer.updateNamespace', (currentNamespaceNode: NamespaceItem) => this.updateNamespace(currentNamespaceNode));
     }
 
     private openResource(resourceUri: vscode.Uri): void {
@@ -138,7 +89,9 @@ function getIconWithType(type: NacosConfigType) {
     }
 }
 
-class NacosConfigItem extends NacosItem {
+export class NacosConfigItem extends NacosItem {
+    contextValue = "NacosConfigItem";
+
     constructor(public nacosConfig: NacosConfig) {
         super(nacosConfig.dataId, nacosConfig.group, getIconWithType(nacosConfig.type), TreeItemCollapsibleState.None);
         this.resourceUri = vscode.Uri.parse(`nacos-configurer:/${nacosConfig.tenant || "default"}/${nacosConfig.group}/${nacosConfig.dataId}`);
@@ -150,18 +103,10 @@ class NacosConfigItem extends NacosItem {
     }
 }
 
-class NamespaceItem extends NacosItem {
+export class NamespaceItem extends NacosItem {
     contextValue = "NamespaceItem";
 
     constructor(public namespace: Namespace) {
         super(namespace.namespaceShowName, namespace.namespace, namespaceIcon, TreeItemCollapsibleState.Collapsed);
     }
-}
-
-
-function guid() {
-    function S4() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-    }
-    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
