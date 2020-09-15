@@ -5,6 +5,8 @@ import { TextEncoder } from "util";
 import { NacosConfig, NacosConfigType } from "../api/config.api";
 import { NacosConfigProvider } from "./nacos.config.provider";
 
+
+
 /**
  * Nacos config file system support provider
  */
@@ -37,13 +39,13 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
     }
 
     async readFile(uri: Uri) {
-        let options = this.extractNacosConfigOps(uri);
+        let options = NacosConfigFileSystemProvider.extractNacosConfigOps(uri);
         const config = await this.api.getConfig(options);
         return new TextEncoder().encode(config.content);
     }
 
     async writeFile(uri: Uri, content: Uint8Array) {
-        let nacosConfigOptions = this.extractNacosConfigOps(uri);
+        let nacosConfigOptions = NacosConfigFileSystemProvider.extractNacosConfigOps(uri);
         let originConfig = await this.api.getConfig(nacosConfigOptions);
         originConfig = originConfig || nacosConfigOptions;
         originConfig.content = content.toString();
@@ -71,7 +73,7 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
      * extract nacos config options with path
      * @param uri vscode uri
      */
-    private extractNacosConfigOps(uri: Uri): Partial<NacosConfig> {
+    static extractNacosConfigOps(uri: Uri): Partial<NacosConfig> {
         const paths = uri.path.split('/');
         let tenant: string, group: string, dataId: string;
         tenant = paths[1] == "default" ? "" : paths[1];
@@ -80,7 +82,7 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
         return { tenant, group, dataId, type: this.extractConfigTypeWithDataId(dataId) };
     }
 
-    private extractConfigTypeWithDataId(dataId: string) {
+    static extractConfigTypeWithDataId(dataId: string) {
         let type = NacosConfigType.TEXT;
         const dataSpl = dataId.split(".");
         if (dataSpl.length > 1) {

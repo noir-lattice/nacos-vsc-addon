@@ -43,6 +43,10 @@
             {
                 "command": "nacos-configurer.deleteConfig",
                 "title": "Remove config file"
+            },
+            {
+                "command": "nacos-configurer.diffConfig",
+                "title": "Diff config file"
             }
         ],
         "menus": {
@@ -68,6 +72,9 @@
                 "when": "view == nacos-configurer && viewItem == NamespaceItem"
             }, {
                 "command": "nacos-configurer.deleteConfig",
+                "when": "view == nacos-configurer && viewItem == NacosConfigItem"
+            }, {
+                "command": "nacos-configurer.diffConfig",
                 "when": "view == nacos-configurer && viewItem == NacosConfigItem"
             }]
         },

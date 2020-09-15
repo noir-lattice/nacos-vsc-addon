@@ -4,6 +4,8 @@ import * as vscode from "vscode";
 import { NacosConfigItem, NacosConfigProvider, NamespaceItem } from "../view/nacos.config.provider";
 import { inputOptions } from "../utils/input.box";
 
+let currentFile: string | undefined;
+
 export class ConfigService {
 
     constructor(
@@ -12,6 +14,7 @@ export class ConfigService {
     ) {
         vscode.commands.registerCommand('nacos-configurer.createConfig', (namespaceNode: NamespaceItem) => this.createConfig(namespaceNode));
         vscode.commands.registerCommand('nacos-configurer.deleteConfig', (configNode: NacosConfigItem) => this.removeConfig(configNode));
+        vscode.commands.registerCommand('nacos-configurer.diffConfig', (configNode: NacosConfigItem) => this.diffConfig(configNode));
     }
 
     async createConfig(namespaceNode: NamespaceItem) {
@@ -45,6 +48,15 @@ export class ConfigService {
         if (stat === "Allow"
             && await this.api.deleteConfig(configNode.nacosConfig)) {
             this.nacosConfigProvider.refresh();
+        }
+    }
+
+    async diffConfig(configNode: NacosConfigItem) {
+        if (!currentFile) {
+            currentFile = `nacos-configurer-read:/${configNode.nacosConfig.tenant || 'default'}/${configNode.nacosConfig.group}/${configNode.nacosConfig.dataId}`
+        } else {
+            vscode.commands.executeCommand("vscode.diff", vscode.Uri.parse(`nacos-configurer:/${configNode.nacosConfig.tenant || 'default'}/${configNode.nacosConfig.group}/${configNode.nacosConfig.dataId}`), vscode.Uri.parse(currentFile))
+            currentFile = undefined;
         }
     }
 }

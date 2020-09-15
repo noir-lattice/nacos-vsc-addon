@@ -2,19 +2,21 @@ import * as vscode from 'vscode';
 import { NacosConfigProvider } from './view/nacos.config.provider';
 import { NacosConfigFileSystemProvider } from './view/nacos.config.fs.provider';
 import { createApiHandleWithNacosConfig } from './auth/auth.options.load';
+import { NacosConfigReadonlyFsProvider } from './view/nacos.config.readonly.fs.provider';
 
 
 export async function activate(context: vscode.ExtensionContext) {
 	const api = await createApiHandleWithNacosConfig();
 	const nacosConfigurer = new NacosConfigProvider(api);
-	const nacosCOnfigurerFs = new NacosConfigFileSystemProvider(api, nacosConfigurer);
-	// add nacos fils system support
-	vscode.workspace.registerFileSystemProvider("nacos-configurer", nacosCOnfigurerFs);
+	const nacosConfigurerFs = new NacosConfigFileSystemProvider(api, nacosConfigurer);
+	const nacosConfigurerReadFs = new NacosConfigReadonlyFsProvider(api);
+	
+	// add nacos file system support
+	vscode.workspace.registerFileSystemProvider("nacos-configurer", nacosConfigurerFs);
+	// add nacos readonly file system support
+	vscode.workspace.registerTextDocumentContentProvider("nacos-configurer-read", nacosConfigurerReadFs);
 	// add viewer
 	vscode.window.registerTreeDataProvider('nacos-configurer', nacosConfigurer);
-
-	// vscode.commands.executeCommand("vscode.diff", vscode.Uri.parse(`nacos-configurer:/default/DEFAULT_GROUP/test.yaml`), vscode.Uri.parse(`nacos-configurer:/default/DEFAULT_GROUP/test1.yaml`), "test -> test1", { preview: true})
-
 }
 
 // this method is called when your extension is deactivated
