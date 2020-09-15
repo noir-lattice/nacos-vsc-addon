@@ -2,7 +2,7 @@ import { FileSystemProvider, Event, Uri, Disposable } from "vscode";
 import * as vscode from "vscode";
 import NacosApi from "../api/api.facade";
 import { TextEncoder } from "util";
-import { NacosConfig } from "../api/config.api";
+import { NacosConfig, NacosConfigType } from "../api/config.api";
 import { NacosConfigProvider } from "./nacos.config.provider";
 
 /**
@@ -72,7 +72,15 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
         tenant = paths[1] == "default" ? "" : paths[1];
         group = paths[2];
         dataId = paths[3];
-        return { tenant, group, dataId };
+        return { tenant, group, dataId, type: this.extractConfigTypeWithDataId(dataId) };
     }
 
+    private extractConfigTypeWithDataId(dataId: string) {
+        let type = NacosConfigType.TEXT;
+        const dataSpl = dataId.split(".");
+        if (dataSpl.length > 1) {
+            type = dataSpl[dataSpl.length - 1] as NacosConfigType;
+        }
+        return type;
+    }
 }
