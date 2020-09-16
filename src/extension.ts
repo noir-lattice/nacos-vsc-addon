@@ -12,7 +12,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const nacosConfigurerFs = new NacosConfigFileSystemProvider(api, nacosConfigurer);
 	const nacosConfigurerReadFs = new NacosConfigReadonlyFsProvider(api);
 	const nacosConfigurerHistoryFs = new NacosConfigHistoryFsProvider(api);
-	
+
 	// add nacos file system support
 	vscode.workspace.registerFileSystemProvider("nacos-configurer", nacosConfigurerFs);
 	// add nacos readonly file system support
