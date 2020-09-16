@@ -2,8 +2,8 @@ import { FileSystemProvider, Event, Uri, Disposable } from "vscode";
 import * as vscode from "vscode";
 import NacosApi from "../../api/api.facade";
 import { TextEncoder } from "util";
-import { NacosConfig, NacosConfigType } from "../../api/config.api";
 import { NacosConfigProvider } from "../nacos.config.provider";
+import { UriUtils } from "../../utils/uri";
 
 
 
@@ -39,13 +39,13 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
     }
 
     async readFile(uri: Uri) {
-        let options = NacosConfigFileSystemProvider.extractNacosConfigOps(uri);
+        let options = UriUtils.toNacosConfig(uri);
         const config = await this.api.getConfig(options);
         return new TextEncoder().encode(config.content);
     }
 
     async writeFile(uri: Uri, content: Uint8Array) {
-        let nacosConfigOptions = NacosConfigFileSystemProvider.extractNacosConfigOps(uri);
+        let nacosConfigOptions = UriUtils.toNacosConfig(uri);
         let originConfig = await this.api.getConfig(nacosConfigOptions);
         originConfig = originConfig || nacosConfigOptions;
         originConfig.content = content.toString();
@@ -69,25 +69,4 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
         throw new Error("Method(rename) not implemented.");
     }
 
-    /**
-     * extract nacos config options with path
-     * @param uri vscode uri
-     */
-    static extractNacosConfigOps(uri: Uri): Partial<NacosConfig> {
-        const paths = uri.path.split('/');
-        let tenant: string, group: string, dataId: string;
-        tenant = paths[1] == "default" ? "" : paths[1];
-        group = paths[2];
-        dataId = paths[3];
-        return { tenant, group, dataId, type: this.extractConfigTypeWithDataId(dataId) };
-    }
-
-    static extractConfigTypeWithDataId(dataId: string) {
-        let type = NacosConfigType.TEXT;
-        const dataSpl = dataId.split(".");
-        if (dataSpl.length > 1) {
-            type = dataSpl[dataSpl.length - 1] as NacosConfigType;
-        }
-        return type;
-    }
 }

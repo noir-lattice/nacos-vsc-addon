@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import NacosApi from "../../api/api.facade";
-import { NacosConfigFileSystemProvider } from "./nacos.config.fs.provider";
+import { UriUtils } from "../../utils/uri";
 
 /**
  * Nacos config readonly file system support provider
@@ -11,7 +11,7 @@ export class NacosConfigReadonlyFsProvider implements vscode.TextDocumentContent
     ) { }
 
     async provideTextDocumentContent(uri: vscode.Uri) {
-        let options = NacosConfigFileSystemProvider.extractNacosConfigOps(uri);
+        let options = UriUtils.toNacosConfig(uri);
         const config = await this.api.getConfig(options);
         return config.content;
     }

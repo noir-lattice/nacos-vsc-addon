@@ -17,11 +17,13 @@ export class UriUtils {
         return vscode.Uri.parse(`${NaconfigFileSystemType.HISTORY}:/${string10to62(id)}/${nacosConfig.tenant || 'default'}/${nacosConfig.group}/${nacosConfig.dataId}`);
     }
 
-    static toNacosConfig(uri: vscode.Uri, type: NaconfigFileSystemType) {
+    static toNacosConfig(uri: vscode.Uri): Partial<NacosConfig> {
+        const type: NaconfigFileSystemType = uri.scheme as NaconfigFileSystemType;
         const paths = uri.path.split('/');
-        let tenant: string, group: string, dataId: string, id: string | undefined = undefined;
+        paths.shift()!; // skip empty string
+        let tenant: string, group: string, dataId: string, id: number | undefined = undefined;
         if (type === NaconfigFileSystemType.HISTORY) {
-            id = string62to10(paths.shift()!) + '';
+            id = string62to10(paths.shift()!);
         }
         tenant = paths.shift()!;
         tenant = tenant == "default" ? "" : tenant;

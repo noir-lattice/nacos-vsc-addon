@@ -1,5 +1,4 @@
 import { TreeItem, TreeItemCollapsibleState } from "vscode";
-import * as vscode from "vscode";
 import * as path from 'path';
 
 import { NacosConfigType, NacosConfig } from "../../api/config.api";
