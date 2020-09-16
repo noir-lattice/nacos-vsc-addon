@@ -3,6 +3,7 @@ import NacosApi from '../api/api.facade';
 import { PageResponse } from '../api/base/api.base';
 import { NacosConfig } from '../api/config.api';
 import { string10to62 } from '../utils/number';
+import { UriUtils } from '../utils/uri';
 import { NacosConfigItem } from './item/node.item.provider';
 
 export function registerHistory(api: NacosApi, context: vscode.ExtensionContext) {
@@ -61,8 +62,8 @@ async function rollbackConfig(api: NacosApi, configNode: NacosConfigItem, messag
 
 function openDiff(configNode: NacosConfigItem, message: any) {
     vscode.commands.executeCommand("vscode.diff",
-        vscode.Uri.parse(`nacos-configurer:/${configNode.nacosConfig.tenant || 'default'}/${configNode.nacosConfig.group}/${configNode.nacosConfig.dataId}`),
-        vscode.Uri.parse(`nacos-configurer-history:/${string10to62(message.id)}/${configNode.nacosConfig.tenant || 'default'}/${configNode.nacosConfig.group}/${configNode.nacosConfig.dataId}`),
+        UriUtils.toWritableUri(configNode.nacosConfig),
+        UriUtils.toHistoryUri(configNode.nacosConfig, message.id),
         `${configNode.nacosConfig.dataId} ⇋ ${configNode.nacosConfig.dataId}:${message.id}`);
 }
 

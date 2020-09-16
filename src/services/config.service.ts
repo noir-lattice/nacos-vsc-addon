@@ -4,8 +4,9 @@ import * as vscode from "vscode";
 import { NacosConfigProvider } from "../view/nacos.config.provider";
 import { inputOptions } from "../utils/input.box";
 import { NamespaceItem, NacosConfigItem } from "../view/item/node.item.provider";
+import { UriUtils } from "../utils/uri";
 
-let currentFile: string | undefined;
+let currentFile: vscode.Uri | undefined;
 let currentDataId: string | undefined;
 
 export class ConfigService {
@@ -30,7 +31,11 @@ export class ConfigService {
             placeHolder: "Group"
         }], "Cancel create config");
         if (createConfigOpt) {
-            const fileUri = vscode.Uri.parse(`nacos-configurer:/${namespaceNode.namespace.namespace || 'default'}/${createConfigOpt.group}/${createConfigOpt.dataId}`);
+            const fileUri = UriUtils.toWritableUri({
+                tenant: namespaceNode.namespace.namespace,
+                group: createConfigOpt.group,
+                dataId: createConfigOpt.dataId,
+            })
             vscode.workspace.openTextDocument(fileUri).then(document => {
                 const edit = new vscode.WorkspaceEdit();
                 edit.insert(fileUri, new vscode.Position(0, 0), "You must be save something to create origin config file!");
@@ -55,12 +60,12 @@ export class ConfigService {
 
     async diffConfig(configNode: NacosConfigItem) {
         if (!currentFile) {
-            currentFile = `nacos-configurer-read:/${configNode.nacosConfig.tenant || 'default'}/${configNode.nacosConfig.group}/${configNode.nacosConfig.dataId}`
+            currentFile = UriUtils.toReadonlyUri(configNode.nacosConfig);
             currentDataId = configNode.nacosConfig.dataId;
         } else {
             vscode.commands.executeCommand("vscode.diff",
-                vscode.Uri.parse(`nacos-configurer:/${configNode.nacosConfig.tenant || 'default'}/${configNode.nacosConfig.group}/${configNode.nacosConfig.dataId}`),
-                vscode.Uri.parse(currentFile),
+                UriUtils.toWritableUri(configNode.nacosConfig),
+                currentFile,
                 `${configNode.nacosConfig.dataId} ⇋ ${currentDataId}`);
             currentFile = undefined;
             currentDataId = undefined;

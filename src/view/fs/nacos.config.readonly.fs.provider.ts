@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import NacosApi from "../api/api.facade";
+import NacosApi from "../../api/api.facade";
 import { NacosConfigFileSystemProvider } from "./nacos.config.fs.provider";
 
 /**

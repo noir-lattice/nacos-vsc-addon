@@ -1,9 +1,9 @@
 import { FileSystemProvider, Event, Uri, Disposable } from "vscode";
 import * as vscode from "vscode";
-import NacosApi from "../api/api.facade";
+import NacosApi from "../../api/api.facade";
 import { TextEncoder } from "util";
-import { NacosConfig, NacosConfigType } from "../api/config.api";
-import { NacosConfigProvider } from "./nacos.config.provider";
+import { NacosConfig, NacosConfigType } from "../../api/config.api";
+import { NacosConfigProvider } from "../nacos.config.provider";
 
 
 

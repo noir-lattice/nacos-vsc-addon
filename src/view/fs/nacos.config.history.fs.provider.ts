@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import NacosApi from "../api/api.facade";
-import { string62to10 } from "../utils/number";
+import NacosApi from "../../api/api.facade";
+import { string62to10 } from "../../utils/number";
 
 /**
  * Nacos config readonly file system support provider

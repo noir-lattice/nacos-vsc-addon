@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 import { NacosConfigProvider } from './view/nacos.config.provider';
-import { NacosConfigFileSystemProvider } from './view/nacos.config.fs.provider';
+import { NacosConfigFileSystemProvider } from './view/fs/nacos.config.fs.provider';
 import { createApiHandleWithNacosConfig } from './auth/auth.options.load';
-import { NacosConfigReadonlyFsProvider } from './view/nacos.config.readonly.fs.provider';
-import { NacosConfigHistoryFsProvider } from './view/nacos.config.history.fs.provider';
+import { NacosConfigReadonlyFsProvider } from './view/fs/nacos.config.readonly.fs.provider';
+import { NacosConfigHistoryFsProvider } from './view/fs/nacos.config.history.fs.provider';
+import { NaconfigFileSystemType } from './constants/constants';
 
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -14,11 +15,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	const nacosConfigurerHistoryFs = new NacosConfigHistoryFsProvider(api);
 
 	// add nacos file system support
-	vscode.workspace.registerFileSystemProvider("nacos-configurer", nacosConfigurerFs);
+	vscode.workspace.registerFileSystemProvider(NaconfigFileSystemType.WRITABLE, nacosConfigurerFs);
 	// add nacos readonly file system support
-	vscode.workspace.registerTextDocumentContentProvider("nacos-configurer-read", nacosConfigurerReadFs);
+	vscode.workspace.registerTextDocumentContentProvider(NaconfigFileSystemType.READONLY, nacosConfigurerReadFs);
 	// add nacos history file system support
-	vscode.workspace.registerTextDocumentContentProvider("nacos-configurer-history", nacosConfigurerHistoryFs);
+	vscode.workspace.registerTextDocumentContentProvider(NaconfigFileSystemType.HISTORY, nacosConfigurerHistoryFs);
 	// add viewer
 	vscode.window.registerTreeDataProvider('nacos-configurer', nacosConfigurer);
 }

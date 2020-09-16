@@ -4,6 +4,7 @@ import * as path from 'path';
 
 import { NacosConfigType, NacosConfig } from "../../api/config.api";
 import { Namespace } from "../../api/namespace.api";
+import { UriUtils } from "../../utils/uri";
 
 
 const namespaceIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'namespace.svg');
@@ -52,7 +53,7 @@ export class NacosConfigItem extends NacosItem {
 
     constructor(public nacosConfig: NacosConfig) {
         super(nacosConfig.dataId, nacosConfig.group, getIconWithType(nacosConfig.type), TreeItemCollapsibleState.None);
-        this.resourceUri = vscode.Uri.parse(`nacos-configurer:/${nacosConfig.tenant || "default"}/${nacosConfig.group}/${nacosConfig.dataId}`);
+        this.resourceUri = UriUtils.toWritableUri(nacosConfig);
         this.command = {
             command: "nacos-configurer.openConfig",
             arguments: [this.resourceUri],
