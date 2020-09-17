@@ -49,7 +49,7 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
         let originConfig = await this.api.getConfig(nacosConfigOptions);
         originConfig = originConfig || nacosConfigOptions;
         originConfig.content = content.toString();
-        const state = await vscode.window.showInformationMessage(`Confirm delete config "${originConfig.dataId}"?`, "Cancel", "Allow");
+        const state = await vscode.window.showInformationMessage(`Confirm update remote config "${originConfig.dataId}"?`, "Cancel", "Allow");
         if (state === "Allow") {
             if (!await this.api.saveConfig(originConfig).catch(err => console.log(err.response))) {
                 throw new Error("Save nacos config file faild");

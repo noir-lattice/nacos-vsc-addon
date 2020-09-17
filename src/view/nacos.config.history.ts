@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import NacosApi from '../api/api.facade';
 import { PageResponse } from '../api/base/api.base';
 import { NacosConfig } from '../api/config.api';
-import { string10to62 } from '../utils/number';
 import { UriUtils } from '../utils/uri';
 import { NacosConfigItem } from './item/node.item.provider';
 

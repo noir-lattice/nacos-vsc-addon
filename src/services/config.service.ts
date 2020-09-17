@@ -8,7 +8,6 @@ import { UriUtils } from "../utils/uri";
 
 let currentFile: vscode.Uri | undefined;
 let currentDataId: string | undefined;
-
 export class ConfigService {
 
     constructor(
@@ -17,6 +16,7 @@ export class ConfigService {
     ) {
         vscode.commands.registerCommand('nacos-configurer.createConfig', (namespaceNode: NamespaceItem) => this.createConfig(namespaceNode));
         vscode.commands.registerCommand('nacos-configurer.deleteConfig', (configNode: NacosConfigItem) => this.removeConfig(configNode));
+        vscode.commands.registerCommand('nacos-configurer.selectToDiffConfig', (configNode: NacosConfigItem) => this.selectToDiffConfig(configNode));
         vscode.commands.registerCommand('nacos-configurer.diffConfig', (configNode: NacosConfigItem) => this.diffConfig(configNode));
     }
 
@@ -58,17 +58,19 @@ export class ConfigService {
         }
     }
 
+    async selectToDiffConfig(configNode: NacosConfigItem) {
+        currentFile = UriUtils.toReadonlyUri(configNode.nacosConfig);
+        currentDataId = configNode.nacosConfig.dataId;
+    }
+
     async diffConfig(configNode: NacosConfigItem) {
         if (!currentFile) {
-            currentFile = UriUtils.toReadonlyUri(configNode.nacosConfig);
-            currentDataId = configNode.nacosConfig.dataId;
+            vscode.window.showErrorMessage("Please select file to Compare")
         } else {
             vscode.commands.executeCommand("vscode.diff",
                 UriUtils.toWritableUri(configNode.nacosConfig),
                 currentFile,
                 `${configNode.nacosConfig.dataId} ⇋ ${currentDataId}`);
-            currentFile = undefined;
-            currentDataId = undefined;
         }
     }
 }

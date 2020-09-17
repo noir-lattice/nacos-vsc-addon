@@ -22,22 +22,18 @@
             "properties": {
                 "nacos.services": {
                     "type": "array",
-                    "default": [
-                        {
-                            "url": "http://localhost:8848/nacos",
-                            "username": "nacos",
-                            "password": "nacos"
-                        }
-                    ],
+                    "default": [{
+                        "url": "http://localhost:8848/nacos",
+                        "username": "nacos",
+                        "password": "nacos"
+                    }],
                     "scope": "window",
                     "description": "nacos 服务连接配置",
-                    "defaultSnippets": [
-                        {
-                            "url": "http://localhost:8848/nacos",
-                            "username": "nacos",
-                            "password": "nacos"
-                        }
-                    ],
+                    "defaultSnippets": [{
+                        "url": "http://localhost:8848/nacos",
+                        "username": "nacos",
+                        "password": "nacos"
+                    }],
                     "items": {
                         "type": "object",
                         "required": [
@@ -65,8 +61,7 @@
                 }
             }
         },
-        "commands": [
-            {
+        "commands": [{
                 "command": "nacos-configurer.refreshEntry",
                 "title": "Refresh",
                 "icon": {
@@ -96,7 +91,11 @@
             },
             {
                 "command": "nacos-configurer.diffConfig",
-                "title": "Diff config file"
+                "title": "Compare with Selected"
+            },
+            {
+                "command": "nacos-configurer.selectToDiffConfig",
+                "title": "Select for Compare"
             },
             {
                 "command": "nacos-configurer.historyConfig",
@@ -104,8 +103,7 @@
             }
         ],
         "menus": {
-            "view/title": [
-                {
+            "view/title": [{
                     "command": "nacos-configurer.refreshEntry",
                     "when": "view == nacos-configurer",
                     "group": "navigation"
@@ -116,8 +114,7 @@
                     "group": "inline"
                 }
             ],
-            "view/item/context": [
-                {
+            "view/item/context": [{
                     "command": "nacos-configurer.updateNamespace",
                     "when": "view == nacos-configurer && viewItem == NamespaceItem"
                 },
@@ -134,8 +131,14 @@
                     "when": "view == nacos-configurer && viewItem == NacosConfigItem"
                 },
                 {
+                    "command": "nacos-configurer.selectToDiffConfig",
+                    "when": "view == nacos-configurer && viewItem == NacosConfigItem",
+                    "group": "Compare"
+                },
+                {
                     "command": "nacos-configurer.diffConfig",
-                    "when": "view == nacos-configurer && viewItem == NacosConfigItem"
+                    "when": "view == nacos-configurer && viewItem == NacosConfigItem",
+                    "group": "Compare"
                 },
                 {
                     "command": "nacos-configurer.historyConfig",
@@ -144,21 +147,17 @@
             ]
         },
         "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "nacos-extends",
-                    "title": "Nacos configurer",
-                    "icon": "media/service-nacos.svg"
-                }
-            ]
+            "activitybar": [{
+                "id": "nacos-extends",
+                "title": "Nacos configurer",
+                "icon": "media/service-nacos.svg"
+            }]
         },
         "views": {
-            "nacos-extends": [
-                {
-                    "id": "nacos-configurer",
-                    "name": "Nacos configurer"
-                }
-            ]
+            "nacos-extends": [{
+                "id": "nacos-configurer",
+                "name": "Nacos configurer"
+            }]
         }
     },
     "scripts": {
