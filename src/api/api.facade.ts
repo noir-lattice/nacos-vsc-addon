@@ -1,19 +1,33 @@
+
+import * as vscode from "vscode";
+
 import { PageResponse, RestfulApi } from "./base/api.base";
 import { NamspaceApi, Namespace, NamespaceCreteOptions } from "./namespace.api";
-import { NacosConfigApi, NacosConfig, NacosConfigQueryOptions, NacosConfigCreateOptions } from "./config.api";
+import { NacosConfigApi, NacosConfig, NacosConfigQueryOptions } from "./config.api";
 import { AuthApi, SignInRepose } from "./auth.api";
 
 class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthApi {
 
-    constructor(private options: NacosOptions) {
+    constructor(public options: NacosOptions) {
         super();
         this.baseUrl = options.url;
         if ((options as TokenOptions).accessToken) {
             this.accessToken = (options as TokenOptions).accessToken;
         }
         this.initHttp();
+
+        // token expire
+        this.errCallback.push(async res => {
+            if (res.status === 403) {
+                try {
+                    await this.signIn(this.options as AuthOptions);
+                } catch {
+                    vscode.window.showErrorMessage("Authentication fail, please reset service config")
+                }
+            }
+        });
     }
-    
+
     /** auth api */
     signIn!: (options: AuthOptions) => Promise<SignInRepose>;
 
