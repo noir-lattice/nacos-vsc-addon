@@ -12,7 +12,8 @@
     ],
     "activationEvents": [
         "onView:nacos-extends",
-        "onView:nacos-configurer"
+        "onView:nacos-configurer",
+        "onView:nacos-discovery"
     ],
     "main": "./out/extension.js",
     "icon": "resources/service-nacos.png",
@@ -81,6 +82,14 @@
             {
                 "command": "nacos-configurer.historyConfig",
                 "title": "Show history"
+            },
+            {
+                "command": "nacos-discovery.removeService",
+                "title": "Remove service"
+            },
+            {
+                "command": "nacos-discovery.createService",
+                "title": "Create service"
             }
         ],
         "menus": {
@@ -149,6 +158,16 @@
                     "command": "nacos-configurer.historyConfig",
                     "when": "view == nacos-configurer && viewItem == NacosConfigItem",
                     "group": "Config"
+                },
+                {
+                    "command": "nacos-discovery.removeService",
+                    "when": "view == nacos-discovery && viewItem == ServiceItem",
+                    "group": "Service"
+                },
+                {
+                    "command": "nacos-discovery.createService",
+                    "when": "view == nacos-discovery && viewItem == NamespaceDiscoveryItem",
+                    "group": "Service"
                 }
             ]
         },

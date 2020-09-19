@@ -9,6 +9,7 @@ export interface InputOptionMeta {
     defaultVal: string;
     placeHolder?: string;
     password?: boolean;
+    nullable?: boolean;
 }
 
 export async function inputOptions(fields: InputOptionMeta[], cancelMsg?: string) {
@@ -19,7 +20,7 @@ export async function inputOptions(fields: InputOptionMeta[], cancelMsg?: string
             value: field.defaultVal,
             password: field.password
         });
-        if (!result) {
+        if (!result && !field.nullable) {
             cancelMsg && vscode.window.showErrorMessage(cancelMsg);
             return undefined;
         }

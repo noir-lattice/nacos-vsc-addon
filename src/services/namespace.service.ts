@@ -35,7 +35,7 @@ export class NamespaceService {
                 param: "customNamespaceId",
                 defaultVal: guid()
             }
-        ], "Cancel create namespace");
+        ]);
         if (namespaceCreateOpt
             && await currentConnectionNode.api.createNamespace(namespaceCreateOpt)) {
             this.nacosConfigProvider.refresh();
@@ -61,8 +61,7 @@ export class NamespaceService {
             placeHolder: "describe",
             param: "namespaceDesc",
             defaultVal: namespace.namespaceDesc
-        }],
-            "Cancel update namespace");
+        }]);
         if (namespaceUpdateOpt) {
             namespaceUpdateOpt.namespace = namespace.namespace;
             if (await namespaceNode.api.updateNamespace(namespaceUpdateOpt)) {

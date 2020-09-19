@@ -31,7 +31,7 @@ export class ConfigService {
             param: "group",
             defaultVal: "DEFAULT_GROUP",
             placeHolder: "Group"
-        }], "Cancel create config");
+        }]);
         if (createConfigOpt) {
             const fileUri = UriUtils.toWritableUri({
                 tenant: namespaceNode.namespace.namespace,

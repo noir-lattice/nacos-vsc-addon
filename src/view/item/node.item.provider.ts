@@ -76,7 +76,7 @@ export class NamespaceConfigItem extends NacosItem {
 export class ServiceItem extends NacosItem {
     contextValue = "ServiceItem";
 
-    constructor(public service: NacosService) {
+    constructor(public service: NacosService, public api: NacosApi) {
         super(service.name, service.groupName, serviceIcon, TreeItemCollapsibleState.None);
     }
 }
