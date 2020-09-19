@@ -10,7 +10,14 @@ let options: NacosOptions[] | undefined;
 if (fs.existsSync(cacheConfigFilePath)) {
     const cacheStr = fs.readFileSync(cacheConfigFilePath, { encoding: "utf-8" });
     if (cacheStr || cacheStr !== "") {
-        options = JSON.parse(cacheStr);
+        const optByFile = JSON.parse(cacheStr);
+        if (optByFile instanceof Array) {
+            options = optByFile;
+        } else {
+            options = [optByFile];
+            saveOptions(options);
+        }
+        
     }
 } else {
     // create file
