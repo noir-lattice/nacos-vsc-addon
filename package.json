@@ -142,7 +142,7 @@
                 },
                 {
                     "command": "nacos-configurer.diffConfig",
-                    "when": "view == nacos-configurer && viewItem == NacosConfigItem",
+                    "when": "view == nacos-configurer && viewItem == NacosConfigItem && selectedFile",
                     "group": "Compare"
                 },
                 {

@@ -63,6 +63,7 @@ export class ConfigService {
     async selectToDiffConfig(configNode: NacosConfigItem) {
         currentFile = UriUtils.toReadonlyUri(configNode.nacosConfig, configNode.api.instanceCounter);
         currentDataId = configNode.nacosConfig.dataId;
+        vscode.commands.executeCommand('setContext', 'selectedFile', currentDataId);
     }
 
     async diffConfig(configNode: NacosConfigItem) {
