@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 import { NacosConfigProvider } from "../view/nacos.config.provider";
 import { inputOptions } from "../utils/input.box";
-import { NamespaceItem, NacosConfigItem } from "../view/item/node.item.provider";
+import { NamespaceConfigItem, NacosConfigItem } from "../view/item/node.item.provider";
 import { UriUtils } from "../utils/uri";
 
 let currentFile: vscode.Uri | undefined;
@@ -16,13 +16,13 @@ export class ConfigService {
     private constructor(
         private nacosConfigProvider: NacosConfigProvider,
     ) {
-        vscode.commands.registerCommand('nacos-configurer.createConfig', (namespaceNode: NamespaceItem) => this.createConfig(namespaceNode));
+        vscode.commands.registerCommand('nacos-configurer.createConfig', (namespaceNode: NamespaceConfigItem) => this.createConfig(namespaceNode));
         vscode.commands.registerCommand('nacos-configurer.deleteConfig', (configNode: NacosConfigItem) => this.removeConfig(configNode));
         vscode.commands.registerCommand('nacos-configurer.selectToDiffConfig', (configNode: NacosConfigItem) => this.selectToDiffConfig(configNode));
         vscode.commands.registerCommand('nacos-configurer.diffConfig', (configNode: NacosConfigItem) => this.diffConfig(configNode));
     }
 
-    async createConfig(namespaceNode: NamespaceItem) {
+    async createConfig(namespaceNode: NamespaceConfigItem) {
         const createConfigOpt = await inputOptions([{
             param: "dataId",
             defaultVal: "",

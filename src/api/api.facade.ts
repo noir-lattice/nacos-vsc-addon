@@ -5,11 +5,12 @@ import { PageResponse, RestfulApi } from "./base/api.base";
 import { NamspaceApi, Namespace, NamespaceCreteOptions } from "./namespace.api";
 import { NacosConfigApi, NacosConfig, NacosConfigQueryOptions } from "./config.api";
 import { AuthApi, SignInRepose } from "./auth.api";
+import { NacosService, NacosServiceApi } from "./services.api";
 
 const apiContainer: NacosApi[] = [];
 let instanceCounter = 0;
 
-class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthApi {
+class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthApi, NacosServiceApi {
     
     static getInstanceByIndex(index: number) {
         return apiContainer[index];
@@ -56,9 +57,12 @@ class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthAp
     deleteConfig!: (options: NacosConfig) => Promise<boolean>;
     getConfigHistoryPage!: (options: NacosConfigQueryOptions) => Promise<PageResponse<NacosConfig>>;
     getConfigHistory!: (options: NacosConfig) => Promise<NacosConfig>;
+
+    /** Nacos service api */
+    getAllService!: (namespaceId: string) => Promise<Array<NacosService>>;
 }
 
-applyMixins(NacosApi, [NamspaceApi, NacosConfigApi, AuthApi]);
+applyMixins(NacosApi, [NamspaceApi, NacosConfigApi, AuthApi, NacosServiceApi]);
 
 function applyMixins(derivedCtor: any, baseCtors: any[]) {
     baseCtors.forEach(baseCtor => {

@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 import NacosApi from "../api/api.facade";
 import { inputOptions } from "../utils/input.box";
-import { ConnectionItem, NamespaceItem } from "../view/item/node.item.provider";
+import { ConnectionItem, NamespaceConfigItem } from "../view/item/node.item.provider";
 import { NacosConfigProvider } from "../view/nacos.config.provider";
 
 
@@ -16,8 +16,8 @@ export class NamespaceService {
         private nacosConfigProvider: NacosConfigProvider,
     ) {
         vscode.commands.registerCommand('nacos-configurer.newNamespace', (currentConnectionNode: ConnectionItem) => this.createNamespace(currentConnectionNode));
-        vscode.commands.registerCommand('nacos-configurer.deleteNamespace', (currentNamespaceNode: NamespaceItem) => this.removeNamespace(currentNamespaceNode));
-        vscode.commands.registerCommand('nacos-configurer.updateNamespace', (currentNamespaceNode: NamespaceItem) => this.updateNamespace(currentNamespaceNode));
+        vscode.commands.registerCommand('nacos-configurer.deleteNamespace', (currentNamespaceNode: NamespaceConfigItem) => this.removeNamespace(currentNamespaceNode));
+        vscode.commands.registerCommand('nacos-configurer.updateNamespace', (currentNamespaceNode: NamespaceConfigItem) => this.updateNamespace(currentNamespaceNode));
     }
 
     async createNamespace(currentConnectionNode: ConnectionItem) {
@@ -42,7 +42,7 @@ export class NamespaceService {
         }
     }
 
-    async removeNamespace(namespaceNode: NamespaceItem) {
+    async removeNamespace(namespaceNode: NamespaceConfigItem) {
         const stat = await vscode.window.showInformationMessage(`Confirm delete namespace "${namespaceNode.contextValue}"?`, "Cancel", "Allow");
         if (stat === "Allow"
             && await namespaceNode.api.deleteNamespace(namespaceNode.namespace.namespace)) {
@@ -50,7 +50,7 @@ export class NamespaceService {
         }
     }
 
-    async updateNamespace(namespaceNode: NamespaceItem) {
+    async updateNamespace(namespaceNode: NamespaceConfigItem) {
         const namespace = await namespaceNode.api.getNamespace(namespaceNode.namespace.namespace);
         const namespaceUpdateOpt = await inputOptions([{
             placeHolder: "show name",

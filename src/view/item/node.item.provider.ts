@@ -5,9 +5,11 @@ import { NacosConfigType, NacosConfig } from "../../api/config.api";
 import { Namespace } from "../../api/namespace.api";
 import { UriUtils } from "../../utils/uri";
 import NacosApi, { NacosOptions } from "../../api/api.facade";
+import { NacosService } from "../../api/services.api";
 
 const connectionIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'connection.svg');
 const namespaceIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'namespace.svg');
+const serviceIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'service.svg');
 const textIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'text.svg');
 const jsonIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'json.svg');
 const xmlIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'xml.svg');
@@ -63,8 +65,24 @@ export class NacosConfigItem extends NacosItem {
     }
 }
 
-export class NamespaceItem extends NacosItem {
-    contextValue = "NamespaceItem";
+export class NamespaceConfigItem extends NacosItem {
+    contextValue = "NamespaceConfigItem";
+
+    constructor(public namespace: Namespace, public api: NacosApi) {
+        super(namespace.namespaceShowName, namespace.namespace, namespaceIcon, TreeItemCollapsibleState.Collapsed);
+    }
+}
+
+export class ServiceItem extends NacosItem {
+    contextValue = "ServiceItem";
+
+    constructor(public service: NacosService) {
+        super(service.name, service.groupName, serviceIcon, TreeItemCollapsibleState.None);
+    }
+}
+
+export class NamespaceDiscoveryItem extends NacosItem {
+    contextValue = "NamespaceDiscoveryItem";
 
     constructor(public namespace: Namespace, public api: NacosApi) {
         super(namespace.namespaceShowName, namespace.namespace, namespaceIcon, TreeItemCollapsibleState.Collapsed);

@@ -31,6 +31,14 @@
                 }
             },
             {
+                "command": "nacos-discovery.refreshEntry",
+                "title": "Refresh",
+                "icon": {
+                    "light": "resources/light/refresh.svg",
+                    "dark": "resources/dark/refresh.svg"
+                }
+            },
+            {
                 "command": "nacos.createConnection",
                 "title": "Craete nacos connection"
             },
@@ -82,39 +90,44 @@
                     "group": "navigation"
                 },
                 {
+                    "command": "nacos-discovery.refreshEntry",
+                    "when": "view == nacos-discovery",
+                    "group": "navigation"
+                },
+                {
                     "command": "nacos.createConnection",
-                    "when": "view == nacos-configurer",
+                    "when": "view == nacos-configurer || view == nacos-discovery",
                     "group": "inline"
                 }
             ],
             "view/item/context": [{
                     "command": "nacos.removeConnection",
-                    "when": "view == nacos-configurer && viewItem == ConnectionItem",
+                    "when": "viewItem == ConnectionItem",
                     "group": "Connection"
                 },
                 {
                     "command": "nacos.updateConnection",
-                    "when": "view == nacos-configurer && viewItem == ConnectionItem",
+                    "when": "viewItem == ConnectionItem",
                     "group": "Connection"
                 },
                 {
                     "command": "nacos-configurer.newNamespace",
-                    "when": "view == nacos-configurer && viewItem == ConnectionItem",
+                    "when": "viewItem == ConnectionItem",
                     "group": "Namespace"
                 },
                 {
                     "command": "nacos-configurer.updateNamespace",
-                    "when": "view == nacos-configurer && viewItem == NamespaceItem",
+                    "when": "viewItem == NamespaceConfigItem || viewItem == NamespaceDiscoveryItem",
                     "group": "Namespace"
                 },
                 {
                     "command": "nacos-configurer.deleteNamespace",
-                    "when": "view == nacos-configurer && viewItem == NamespaceItem",
+                    "when": "viewItem == NamespaceConfigItem || viewItem == NamespaceDiscoveryItem",
                     "group": "Namespace"
                 },
                 {
                     "command": "nacos-configurer.createConfig",
-                    "when": "view == nacos-configurer && viewItem == NamespaceItem",
+                    "when": "view == nacos-configurer && viewItem == NamespaceConfigItem",
                     "group": "Config"
                 },
                 {
@@ -142,15 +155,20 @@
         "viewsContainers": {
             "activitybar": [{
                 "id": "nacos-extends",
-                "title": "Nacos configurer",
+                "title": "Nacos Viewer",
                 "icon": "media/service-nacos.svg"
             }]
         },
         "views": {
             "nacos-extends": [{
-                "id": "nacos-configurer",
-                "name": "Nacos configurer"
-            }]
+                    "id": "nacos-configurer",
+                    "name": "Nacos configurer"
+                },
+                {
+                    "id": "nacos-discovery",
+                    "name": "Nacos discovery"
+                }
+            ]
         }
     },
     "scripts": {

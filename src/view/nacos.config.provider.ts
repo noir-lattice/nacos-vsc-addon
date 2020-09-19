@@ -1,6 +1,6 @@
 import { TreeDataProvider } from "vscode";
 import * as vscode from "vscode";
-import { NacosItem, NamespaceItem, NacosConfigItem, ConnectionItem } from "./item/node.item.provider";
+import { NacosItem, NamespaceConfigItem, NacosConfigItem, ConnectionItem } from "./item/node.item.provider";
 import { NamespaceService } from "../services/namespace.service";
 import { ConfigService } from "../services/config.service";
 import { registerHistory } from "./nacos.config.history";
@@ -24,8 +24,8 @@ export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
             return (opts || []).map(opt => new ConnectionItem(opt));
         } else if (element instanceof ConnectionItem) {
             const namespaces = await element.api.getAllNamespace();
-            return namespaces.map(namespace => new NamespaceItem(namespace, element.api));
-        } else if (element instanceof NamespaceItem) {
+            return namespaces.map(namespace => new NamespaceConfigItem(namespace, element.api));
+        } else if (element instanceof NamespaceConfigItem) {
             const configs = await element.api.getAllConfig({
                 tenant: element.namespace.namespace,
                 pageNo: 1,
