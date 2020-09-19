@@ -2,22 +2,25 @@ import * as vscode from "vscode";
 
 import NacosApi from "../api/api.facade";
 import { inputOptions } from "../utils/input.box";
-import { NamespaceItem } from "../view/item/node.item.provider";
+import { ConnectionItem, NamespaceItem } from "../view/item/node.item.provider";
 import { NacosConfigProvider } from "../view/nacos.config.provider";
 
 
 export class NamespaceService {
 
-    constructor(
+    static register(nacosConfigProvider: NacosConfigProvider) {
+        new NamespaceService(nacosConfigProvider);
+    }
+
+    private constructor(
         private nacosConfigProvider: NacosConfigProvider,
-        private api: NacosApi,
     ) {
-        vscode.commands.registerCommand('nacos-configurer.newNamespace', () => this.createNamespace());
+        vscode.commands.registerCommand('nacos-configurer.newNamespace', (currentConnectionNode: ConnectionItem) => this.createNamespace(currentConnectionNode));
         vscode.commands.registerCommand('nacos-configurer.deleteNamespace', (currentNamespaceNode: NamespaceItem) => this.removeNamespace(currentNamespaceNode));
         vscode.commands.registerCommand('nacos-configurer.updateNamespace', (currentNamespaceNode: NamespaceItem) => this.updateNamespace(currentNamespaceNode));
     }
 
-    async createNamespace() {
+    async createNamespace(currentConnectionNode: ConnectionItem) {
         const namespaceCreateOpt = await inputOptions([
             {
                 placeHolder: "namespace",
@@ -34,7 +37,7 @@ export class NamespaceService {
             }
         ], "Cancel create namespace");
         if (namespaceCreateOpt
-            && await this.api.createNamespace(namespaceCreateOpt)) {
+            && await currentConnectionNode.api.createNamespace(namespaceCreateOpt)) {
             this.nacosConfigProvider.refresh();
         }
     }
@@ -42,13 +45,13 @@ export class NamespaceService {
     async removeNamespace(namespaceNode: NamespaceItem) {
         const stat = await vscode.window.showInformationMessage(`Confirm delete namespace "${namespaceNode.contextValue}"?`, "Cancel", "Allow");
         if (stat === "Allow"
-            && await this.api.deleteNamespace(namespaceNode.namespace.namespace)) {
+            && await namespaceNode.api.deleteNamespace(namespaceNode.namespace.namespace)) {
             this.nacosConfigProvider.refresh();
         }
     }
 
     async updateNamespace(namespaceNode: NamespaceItem) {
-        const namespace = await this.api.getNamespace(namespaceNode.namespace.namespace);
+        const namespace = await namespaceNode.api.getNamespace(namespaceNode.namespace.namespace);
         const namespaceUpdateOpt = await inputOptions([{
             placeHolder: "show name",
             param: "namespaceShowName",
@@ -62,7 +65,7 @@ export class NamespaceService {
             "Cancel update namespace");
         if (namespaceUpdateOpt) {
             namespaceUpdateOpt.namespace = namespace.namespace;
-            if (await this.api.updateNamespace(namespaceUpdateOpt)) {
+            if (await namespaceNode.api.updateNamespace(namespaceUpdateOpt)) {
                 this.nacosConfigProvider.refresh();
             }
         }

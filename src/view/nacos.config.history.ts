@@ -5,7 +5,7 @@ import { NacosConfig } from '../api/config.api';
 import { UriUtils } from '../utils/uri';
 import { NacosConfigItem } from './item/node.item.provider';
 
-export function registerHistory(api: NacosApi, context: vscode.ExtensionContext) {
+export function registerHistory(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('nacos-configurer.historyConfig', async (configNode: NacosConfigItem) => {
 
         // Create and show panel
@@ -25,7 +25,7 @@ export function registerHistory(api: NacosApi, context: vscode.ExtensionContext)
                         openDiff(configNode, message);
                         return;
                     case 'rollback':
-                        rollbackConfig(api, configNode, message);
+                        rollbackConfig(configNode.api, configNode, message);
                         return;
                 }
             },
@@ -34,10 +34,10 @@ export function registerHistory(api: NacosApi, context: vscode.ExtensionContext)
         );
 
         // And set its HTML content
-        let page = await api.getConfigHistoryPage(configNode.nacosConfig);
+        let page = await configNode.api.getConfigHistoryPage(configNode.nacosConfig);
         panel.webview.html = getWebviewContent(page);
         // reload all history
-        page = await api.getConfigHistoryPage({
+        page = await configNode.api.getConfigHistoryPage({
             ...configNode.nacosConfig,
             pageSize: page.totalCount,
         });
@@ -61,8 +61,8 @@ async function rollbackConfig(api: NacosApi, configNode: NacosConfigItem, messag
 
 function openDiff(configNode: NacosConfigItem, message: any) {
     vscode.commands.executeCommand("vscode.diff",
-        UriUtils.toWritableUri(configNode.nacosConfig),
-        UriUtils.toHistoryUri(configNode.nacosConfig, message.id),
+        UriUtils.toWritableUri(configNode.nacosConfig, configNode.api.instanceCounter),
+        UriUtils.toHistoryUri(configNode.nacosConfig, message.id, configNode.api.instanceCounter),
         `${configNode.nacosConfig.dataId} ⇋ ${configNode.nacosConfig.dataId}:${message.id}`);
 }
 

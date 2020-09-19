@@ -6,11 +6,22 @@ import { NamspaceApi, Namespace, NamespaceCreteOptions } from "./namespace.api";
 import { NacosConfigApi, NacosConfig, NacosConfigQueryOptions } from "./config.api";
 import { AuthApi, SignInRepose } from "./auth.api";
 
+const apiContainer: NacosApi[] = [];
+let instanceCounter = 0;
+
 class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthApi {
+    
+    static getInstanceByIndex(index: number) {
+        return apiContainer[index];
+    }
+    
+    instanceCounter: number;
 
     constructor(public options: NacosOptions) {
         super();
         this.baseUrl = options.url;
+        apiContainer.push(this);
+        this.instanceCounter = instanceCounter++;
         if ((options as TokenOptions).accessToken) {
             this.accessToken = (options as TokenOptions).accessToken;
         }

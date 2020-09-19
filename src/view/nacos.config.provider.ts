@@ -1,16 +1,14 @@
 import { TreeDataProvider } from "vscode";
 import * as vscode from "vscode";
-import NacosApi from "../api/api.facade";
-import { NacosItem, NamespaceItem, NacosConfigItem } from "./item/node.item.provider";
+import { NacosItem, NamespaceItem, NacosConfigItem, ConnectionItem } from "./item/node.item.provider";
 import { NamespaceService } from "../services/namespace.service";
 import { ConfigService } from "../services/config.service";
 import { registerHistory } from "./nacos.config.history";
+import { getServiceConfig, openConfigInput, removeOptions, saveServiceConfig } from "../auth/auth.options.load";
 
 export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<NacosItem | undefined> = new vscode.EventEmitter<NacosItem | undefined>();
     onDidChangeTreeData?: vscode.Event<void | NacosItem | null | undefined> | undefined = this._onDidChangeTreeData.event;
-    namespaceService: NamespaceService;
-    configService: ConfigService;
 
     refresh() {
         this._onDidChangeTreeData.fire(undefined);
@@ -22,24 +20,32 @@ export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
 
     async getChildren(element?: NacosItem | undefined) {
         if (!element) {
-            const namespaces = await this.api.getAllNamespace();
-            return namespaces.map(namespace => new NamespaceItem(namespace));
+            const opts = await getServiceConfig();
+            return (opts || []).map(opt => new ConnectionItem(opt));
+        } else if (element instanceof ConnectionItem) {
+            const namespaces = await element.api.getAllNamespace();
+            return namespaces.map(namespace => new NamespaceItem(namespace, element.api));
         } else if (element instanceof NamespaceItem) {
-            const configs = await this.api.getAllConfig({
+            const configs = await element.api.getAllConfig({
                 tenant: element.namespace.namespace,
                 pageNo: 1,
                 pageSize: element.namespace.configCount || 10,
             });
-            return configs.map(config => new NacosConfigItem(config));
+            return configs.map(config => new NacosConfigItem(config, element.api));
         }
     }
 
-    constructor(private api: NacosApi, context: vscode.ExtensionContext) {
-        this.namespaceService = new NamespaceService(this, api);
-        this.configService = new ConfigService(this, api);
+    constructor(context: vscode.ExtensionContext) {
+        // register namespace service
+        NamespaceService.register(this);
+        // register config service
+        ConfigService.register(this);
         // register history
-        registerHistory(this.api, context);
+        registerHistory(context);
         // register command
+        vscode.commands.registerCommand('nacos.createConnection', () => this.updateConnection());
+        vscode.commands.registerCommand('nacos.removeConnection', (connectionItem: ConnectionItem) => this.removeConnection(connectionItem));
+        vscode.commands.registerCommand('nacos.updateConnection', (connectionItem: ConnectionItem) => this.updateConnection(connectionItem));
         vscode.commands.registerCommand('nacos-configurer.openConfig', resource => this.openResource(resource));
         vscode.commands.registerCommand('nacos-configurer.refreshEntry', () => this.refresh());
     }
@@ -47,4 +53,19 @@ export class NacosConfigProvider implements TreeDataProvider<NacosItem> {
     private openResource(resourceUri: vscode.Uri): void {
         vscode.window.showTextDocument(resourceUri);
     }
+
+    private async updateConnection(connectionItem?: ConnectionItem) {
+        const options = await openConfigInput(connectionItem ? connectionItem.options : undefined);
+        options && await saveServiceConfig(options);
+        this.refresh();
+    }
+
+    private async removeConnection(connectionItem: ConnectionItem) {
+        const stat = await vscode.window.showInformationMessage(`Confirm delete connection "${connectionItem.contextValue}"?`, "Cancel", "Allow");
+        if (stat === "Allow") {
+            await removeOptions(connectionItem.options);
+            this.refresh();
+        }
+    }
+
 }

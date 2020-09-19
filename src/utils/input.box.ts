@@ -11,7 +11,7 @@ export interface InputOptionMeta {
     password?: boolean;
 }
 
-export async function inputOptions(fields: InputOptionMeta[], cancelMsg: string) {
+export async function inputOptions(fields: InputOptionMeta[], cancelMsg?: string) {
     const target = {} as any;
     for (const field of fields) {
         const result = await vscode.window.showInputBox({
@@ -20,7 +20,7 @@ export async function inputOptions(fields: InputOptionMeta[], cancelMsg: string)
             password: field.password
         });
         if (!result) {
-            vscode.window.showErrorMessage(cancelMsg);
+            cancelMsg && vscode.window.showErrorMessage(cancelMsg);
             return undefined;
         }
         target[field.param] = result;

@@ -22,50 +22,6 @@
             "contents": "Basic Nacos Restful uri and corresponding authentication information are required.\n[Setting Connection](command:nacos.updateConnection)\n",
             "when": "noServiceInfomation"
         }],
-        "configuration": {
-            "title": "Nacos",
-            "properties": {
-                "nacos.services": {
-                    "type": "array",
-                    "default": [{
-                        "url": "http://localhost:8848/nacos",
-                        "username": "nacos",
-                        "password": "nacos"
-                    }],
-                    "scope": "window",
-                    "description": "nacos 服务连接配置",
-                    "defaultSnippets": [{
-                        "url": "http://localhost:8848/nacos",
-                        "username": "nacos",
-                        "password": "nacos"
-                    }],
-                    "items": {
-                        "type": "object",
-                        "required": [
-                            "url",
-                            "username",
-                            "password"
-                        ],
-                        "properties": {
-                            "url": {
-                                "type": "string",
-                                "default": "http://localhost:8848/nacos"
-                            },
-                            "username": {
-                                "type": "string",
-                                "default": "nacos"
-                            },
-                            "password": {
-                                "type": "string"
-                            },
-                            "accessToken": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "commands": [{
                 "command": "nacos-configurer.refreshEntry",
                 "title": "Refresh",
@@ -75,12 +31,20 @@
                 }
             },
             {
+                "command": "nacos.createConnection",
+                "title": "Craete nacos connection"
+            },
+            {
+                "command": "nacos.removeConnection",
+                "title": "Remove nacos connection"
+            },
+            {
                 "command": "nacos.updateConnection",
                 "title": "Update nacos connection"
             },
             {
                 "command": "nacos-configurer.newNamespace",
-                "title": "New namespace"
+                "title": "Craete namespace"
             },
             {
                 "command": "nacos-configurer.updateNamespace",
@@ -118,31 +82,45 @@
                     "group": "navigation"
                 },
                 {
-                    "command": "nacos-configurer.newNamespace",
-                    "when": "view == nacos-configurer",
-                    "group": "inline"
-                },
-                {
-                    "command": "nacos.updateConnection",
+                    "command": "nacos.createConnection",
                     "when": "view == nacos-configurer",
                     "group": "inline"
                 }
             ],
             "view/item/context": [{
+                    "command": "nacos.removeConnection",
+                    "when": "view == nacos-configurer && viewItem == ConnectionItem",
+                    "group": "Connection"
+                },
+                {
+                    "command": "nacos.updateConnection",
+                    "when": "view == nacos-configurer && viewItem == ConnectionItem",
+                    "group": "Connection"
+                },
+                {
+                    "command": "nacos-configurer.newNamespace",
+                    "when": "view == nacos-configurer && viewItem == ConnectionItem",
+                    "group": "Namespace"
+                },
+                {
                     "command": "nacos-configurer.updateNamespace",
-                    "when": "view == nacos-configurer && viewItem == NamespaceItem"
+                    "when": "view == nacos-configurer && viewItem == NamespaceItem",
+                    "group": "Namespace"
                 },
                 {
                     "command": "nacos-configurer.deleteNamespace",
-                    "when": "view == nacos-configurer && viewItem == NamespaceItem"
+                    "when": "view == nacos-configurer && viewItem == NamespaceItem",
+                    "group": "Namespace"
                 },
                 {
                     "command": "nacos-configurer.createConfig",
-                    "when": "view == nacos-configurer && viewItem == NamespaceItem"
+                    "when": "view == nacos-configurer && viewItem == NamespaceItem",
+                    "group": "Config"
                 },
                 {
                     "command": "nacos-configurer.deleteConfig",
-                    "when": "view == nacos-configurer && viewItem == NacosConfigItem"
+                    "when": "view == nacos-configurer && viewItem == NacosConfigItem",
+                    "group": "Config"
                 },
                 {
                     "command": "nacos-configurer.selectToDiffConfig",
@@ -156,7 +134,8 @@
                 },
                 {
                     "command": "nacos-configurer.historyConfig",
-                    "when": "view == nacos-configurer && viewItem == NacosConfigItem"
+                    "when": "view == nacos-configurer && viewItem == NacosConfigItem",
+                    "group": "Config"
                 }
             ]
         },

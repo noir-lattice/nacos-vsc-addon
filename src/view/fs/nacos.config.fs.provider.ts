@@ -1,11 +1,8 @@
 import { FileSystemProvider, Event, Uri, Disposable } from "vscode";
 import * as vscode from "vscode";
-import NacosApi from "../../api/api.facade";
 import { TextEncoder } from "util";
 import { NacosConfigProvider } from "../nacos.config.provider";
 import { UriUtils } from "../../utils/uri";
-
-
 
 /**
  * Nacos config file system support provider
@@ -15,14 +12,12 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
     onDidChangeFile: Event<vscode.FileChangeEvent[]> = this.onDidChangeEmitter.event;
 
     constructor(
-        private api: NacosApi,
         private nacosConfigProvider: NacosConfigProvider,
     ) { }
 
     watch(uri: Uri, options: { recursive: boolean; excludes: string[]; }): Disposable {
         return new Disposable(() => {
-            console.log(uri.toString);
-            console.log(options);
+            // pass
         });
     }
 
@@ -40,18 +35,19 @@ export class NacosConfigFileSystemProvider implements FileSystemProvider {
 
     async readFile(uri: Uri) {
         let options = UriUtils.toNacosConfig(uri);
-        const config = await this.api.getConfig(options);
+        const config = await UriUtils.getApiInstanceUri(uri).getConfig(options);
         return new TextEncoder().encode(config.content);
     }
 
     async writeFile(uri: Uri, content: Uint8Array) {
         let nacosConfigOptions = UriUtils.toNacosConfig(uri);
-        let originConfig = await this.api.getConfig(nacosConfigOptions);
+        const api = UriUtils.getApiInstanceUri(uri);
+        let originConfig = await api.getConfig(nacosConfigOptions);
         originConfig = originConfig || nacosConfigOptions;
         originConfig.content = content.toString();
         const state = await vscode.window.showInformationMessage(`Confirm update remote config "${originConfig.dataId}"?`, "Cancel", "Allow");
         if (state === "Allow") {
-            if (!await this.api.saveConfig(originConfig).catch(err => console.log(err.response))) {
+            if (!await api.saveConfig(originConfig).catch(err => console.log(err.response))) {
                 throw new Error("Save nacos config file faild");
             } else {
                 this.nacosConfigProvider.refresh();

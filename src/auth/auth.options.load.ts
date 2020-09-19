@@ -25,16 +25,42 @@ export async function openConfigInput(opt?: NacosOptions) {
             param: opt.password || "password",
             password: true
         }
-    ],
-        "The Nacos addon support cannot be obtained without basic authentication information");
-    if (options) { 
-        configFile.saveOptions(options);
-        vscode.commands.executeCommand('setContext', 'noServiceInfomation', false);
-    }
+    ]);
     return options;
 }
 
-export async function getServiceConfig(): Promise<NacosOptions | undefined> {
+export async function saveServiceConfig(target: NacosOptions) {
+    let options = await getServiceConfig();
+    options = options || [];
+    for (let index = 0; index < options.length; index++) {
+        const option = options[index];
+        if (target.url === option.url) {
+            options.splice(index, 1); // remove old config
+            index--;
+        }
+    }
+    options.push(target);
+    vscode.commands.executeCommand('setContext', 'noServiceInfomation', false);
+    configFile.saveOptions(options);
+}
+
+export async function removeOptions(current: NacosOptions) {
+    let options = await getServiceConfig();
+    options = options || [];
+    for (let index = 0; index < options.length; index++) {
+        const option = options[index];
+        if (current === option) {
+            options.splice(index, 1);
+            if (!options.length) {
+                vscode.commands.executeCommand('setContext', 'noServiceInfomation', true);
+            }
+            configFile.saveOptions(options);
+            return;
+        }
+    }
+}
+
+export async function getServiceConfig(): Promise<(NacosOptions[] | undefined)> {
     const opt = configFile.getOptions();
     if (!opt) {
         vscode.commands.executeCommand('setContext', 'noServiceInfomation', true);

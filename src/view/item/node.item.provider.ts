@@ -4,8 +4,9 @@ import * as path from 'path';
 import { NacosConfigType, NacosConfig } from "../../api/config.api";
 import { Namespace } from "../../api/namespace.api";
 import { UriUtils } from "../../utils/uri";
+import NacosApi, { NacosOptions } from "../../api/api.facade";
 
-
+const connectionIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'connection.svg');
 const namespaceIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'namespace.svg');
 const textIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'text.svg');
 const jsonIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'json.svg');
@@ -15,6 +16,7 @@ const htmlIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'html.sv
 const propertiesIcon = path.join(__filename, '..', '..', '..', '..', 'media', 'properties.svg');
 
 export class NacosItem extends TreeItem {
+    
     constructor(
         label: string,
         desc: string,
@@ -50,9 +52,9 @@ function getIconWithType(type: NacosConfigType) {
 export class NacosConfigItem extends NacosItem {
     contextValue = "NacosConfigItem";
 
-    constructor(public nacosConfig: NacosConfig) {
+    constructor(public nacosConfig: NacosConfig, public api: NacosApi) {
         super(nacosConfig.dataId, nacosConfig.group, getIconWithType(nacosConfig.type), TreeItemCollapsibleState.None);
-        this.resourceUri = UriUtils.toWritableUri(nacosConfig);
+        this.resourceUri = UriUtils.toWritableUri(nacosConfig, api.instanceCounter);
         this.command = {
             command: "nacos-configurer.openConfig",
             arguments: [this.resourceUri],
@@ -64,7 +66,17 @@ export class NacosConfigItem extends NacosItem {
 export class NamespaceItem extends NacosItem {
     contextValue = "NamespaceItem";
 
-    constructor(public namespace: Namespace) {
+    constructor(public namespace: Namespace, public api: NacosApi) {
         super(namespace.namespaceShowName, namespace.namespace, namespaceIcon, TreeItemCollapsibleState.Collapsed);
+    }
+}
+
+export class ConnectionItem extends NacosItem {
+    contextValue = "ConnectionItem";
+    api: NacosApi;
+
+    constructor(public options: NacosOptions) {
+        super(options.url, '', connectionIcon, TreeItemCollapsibleState.Expanded);
+        this.api = new NacosApi(options);
     }
 }

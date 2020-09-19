@@ -4,7 +4,7 @@ import { NacosOptions } from '../api/api.facade';
 
 const cacheConfigFile = "auth";
 const cacheConfigFilePath = path.join(__filename, "..", cacheConfigFile);
-let options: NacosOptions | undefined;
+let options: NacosOptions[] | undefined;
 
 // start time will be load option to memory with auth file
 if (fs.existsSync(cacheConfigFilePath)) {
@@ -17,7 +17,7 @@ if (fs.existsSync(cacheConfigFilePath)) {
     fs.writeFileSync(cacheConfigFilePath, "", { encoding: "utf-8" });
 }
 
-export function saveOptions(dest: NacosOptions) {
+export function saveOptions(dest: NacosOptions[]) {
     dest && fs.writeFileSync(cacheConfigFilePath, JSON.stringify(dest), { encoding: "utf-8" });
     options = dest;
 }
