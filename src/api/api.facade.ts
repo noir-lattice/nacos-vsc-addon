@@ -5,7 +5,7 @@ import { PageResponse, RestfulApi } from "./base/api.base";
 import { NamspaceApi, Namespace, NamespaceCreteOptions } from "./namespace.api";
 import { NacosConfigApi, NacosConfig, NacosConfigQueryOptions } from "./config.api";
 import { AuthApi, SignInRepose } from "./auth.api";
-import { NacosCreateServiceOptions, NacosService, NacosServiceApi } from "./services.api";
+import { NacosCreateServiceOptions, NacosService, NacosServiceApi, ServiceDetail, ServiceInstanceDetail } from "./services.api";
 
 const apiContainer: NacosApi[] = [];
 let instanceCounter = 0;
@@ -75,6 +75,8 @@ class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthAp
     getAllService!: (namespaceId: string) => Promise<Array<NacosService>>;
     deleteService!: (serv: NacosService) => Promise<boolean>;
     createService!: (opt: NacosCreateServiceOptions) => Promise<boolean>;
+    getDetail!: (opt: NacosService) => Promise<ServiceDetail>;
+    getAllInstance!: (opt: NacosService, clusterName: string) => Promise<ServiceInstanceDetail>;
 }
 
 applyMixins(NacosApi, [NamspaceApi, NacosConfigApi, AuthApi, NacosServiceApi]);
