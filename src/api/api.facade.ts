@@ -10,15 +10,28 @@ import { NacosCreateServiceOptions, NacosService, NacosServiceApi } from "./serv
 const apiContainer: NacosApi[] = [];
 let instanceCounter = 0;
 
+function equalAuthOptions(oldOpt: AuthOptions, options: AuthOptions) {
+    return (oldOpt === options) || (oldOpt.url === options.url && oldOpt.username === options.username && oldOpt.password === options.password);
+}
+
 class NacosApi extends RestfulApi implements NamspaceApi, NacosConfigApi, AuthApi, NacosServiceApi {
-    
+
     static getInstanceByIndex(index: number) {
         return apiContainer[index];
     }
-    
+
+    static createInstanceByOptions(options: NacosOptions) {
+        for (const api of apiContainer) {
+            if (equalAuthOptions(api.options as AuthOptions, options as AuthOptions)) {
+                return api;
+            }
+        }
+        return new NacosApi(options);
+    }
+
     instanceCounter: number;
 
-    constructor(public options: NacosOptions) {
+    private constructor(public options: NacosOptions) {
         super();
         this.baseUrl = options.url;
         apiContainer.push(this);

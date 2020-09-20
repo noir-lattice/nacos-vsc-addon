@@ -95,6 +95,6 @@ export class ConnectionItem extends NacosItem {
 
     constructor(public options: NacosOptions) {
         super(options.url, '', connectionIcon, TreeItemCollapsibleState.Expanded);
-        this.api = new NacosApi(options);
+        this.api = NacosApi.createInstanceByOptions(options);
     }
 }

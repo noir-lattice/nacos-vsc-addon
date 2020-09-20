@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 
-import NacosApi from "../api/api.facade";
 import { inputOptions } from "../utils/input.box";
 import { ConnectionItem, NamespaceConfigItem } from "../view/item/node.item.provider";
 import { NacosConfigProvider } from "../view/nacos.config.provider";
