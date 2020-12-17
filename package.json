@@ -44,7 +44,7 @@
       },
       {
         "command": "nacos.createConnection",
-        "title": "Craete nacos connection"
+        "title": "Create nacos connection"
       },
       {
         "command": "nacos.removeConnection",
@@ -56,7 +56,7 @@
       },
       {
         "command": "nacos-configurer.newNamespace",
-        "title": "Craete namespace"
+        "title": "Create namespace"
       },
       {
         "command": "nacos-configurer.updateNamespace",
